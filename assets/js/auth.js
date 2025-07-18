@@ -44,11 +44,16 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data.success) {
+          if (data.success && data.user) {
             // Stocker l'utilisateur dans sessionStorage
             sessionStorage.setItem("user", JSON.stringify(data.user));
             // Redirection vers la page de loading
-            window.location.href = "loading.html";
+            if (data.user.role === "admin") {
+              window.location.href = "../back-office/dashboard.html";
+            } else {
+              window.location.href = "home.html";
+            }
+            return;
           } else {
             document.getElementById("login-message").textContent =
               data.error || "Erreur de connexion.";
