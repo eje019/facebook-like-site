@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscription - Facebook-like</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <style>
+      :root {
+        --color-primary: #42b72a;
+        --color-primary-dark: #36a420;
+        --color-surface: #1a1a1a;
+        --color-surface-alt: #2d2d2d;
+        --color-input-bg: #2d2d2d;
+        --color-text: #ffffff;
+        --color-text-muted: #b0b3b8;
+        --color-border: #3a3a3a;
+        --color-danger: #e53935;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .register-container {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        width: 100%;
+        max-width: 450px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .register-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(
+          90deg,
+          var(--color-primary),
+          var(--color-primary-dark),
+          var(--color-primary)
+        );
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .logo h1 {
+        color: var(--color-primary);
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .logo p {
+        color: var(--color-text-muted);
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .form-row.full {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row.three {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .form-row.radio {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+
+      .input-group {
+        position: relative;
+      }
+
+      .input-group input,
+      .input-group select {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid var(--color-border);
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: var(--color-input-bg);
+        color: var(--color-text);
+      }
+
+      .input-group input:focus,
+      .input-group select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        background: var(--color-surface-alt);
+        box-shadow: 0 0 0 3px rgba(66, 183, 42, 0.1);
+      }
+
+      .input-group input::placeholder {
+        color: var(--color-text-muted);
+      }
+
+      .date-label {
+        font-weight: 600;
+        color: var(--color-text);
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        border: 2px solid var(--color-border);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--color-text);
+      }
+
+      .radio-option:hover {
+        border-color: var(--color-primary);
+        background: var(--color-surface-alt);
+      }
+
+      .radio-option input[type="radio"] {
+        width: auto;
+        margin: 0;
+      }
+
+      .radio-option input[type="radio"]:checked + span {
+        color: var(--color-primary);
+        font-weight: 600;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-dark)
+        );
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(66, 183, 42, 0.3);
+      }
+
+      .submit-btn:active {
+        transform: translateY(0);
+      }
+
+      .message {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .message.success {
+        background: rgba(66, 183, 42, 0.1);
+        color: var(--color-primary);
+        border: 1px solid rgba(66, 183, 42, 0.3);
+      }
+
+      .message.error {
+        background: rgba(229, 57, 53, 0.1);
+        color: var(--color-danger);
+        border: 1px solid rgba(229, 57, 53, 0.3);
+      }
+
+      .login-link {
+        text-align: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .login-link a {
+        color: var(--color-primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      .login-link a:hover {
+        color: var(--color-primary-dark);
+        text-decoration: underline;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+              .spinner {
+          border: 3px solid var(--color-border);
+          border-top: 3px solid var(--color-primary);
+          border-radius: 50%;
+          width: 30px;
+          height: 30px;
+          animation: spin 1s linear infinite;
+          margin: 0 auto;
+        }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 480px) {
+        .register-container {
+          padding: 30px 20px;
+          margin: 10px;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .form-row.radio {
+          grid-template-columns: 1fr;
+        }
+
+        .logo h1 {
+          font-size: 2rem;
+        }
+
+        .logo p {
+          font-size: 1rem;
+        }
+      }
+
+              .password-requirements {
+          margin-top: 10px;
+          font-size: 0.85rem;
+          color: var(--color-text-muted);
+          line-height: 1.4;
+        }
+
+        .requirement {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          margin-bottom: 3px;
+        }
+
+        .requirement.valid {
+          color: var(--color-primary);
+        }
+
+        .requirement.invalid {
+          color: var(--color-danger);
+        }
+
+      .requirement-icon {
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="logo">
+        <h1>facebook</h1>
+        <p>Créez votre compte Facebook</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <div class="form-row">
+            <div class="input-group">
+              <input type="text" name="prenom" placeholder="Prénom" required />
+            </div>
+            <div class="input-group">
+              <input
+                type="text"
+                name="nom"
+                placeholder="Nom de famille"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-group">
+            <input
+              type="email"
+              name="email"
+              placeholder="Adresse e-mail"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-group">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="Nouveau mot de passe"
+              required
+            />
+            <div class="password-requirements">
+              <div class="requirement" id="req-length">
+                <span class="requirement-icon">•</span>
+                Au moins 8 caractères
+              </div>
+              <div class="requirement" id="req-uppercase">
+                <span class="requirement-icon">•</span>
+                Une lettre majuscule
+              </div>
+              <div class="requirement" id="req-lowercase">
+                <span class="requirement-icon">•</span>
+                Une lettre minuscule
+              </div>
+              <div class="requirement" id="req-number">
+                <span class="requirement-icon">•</span>
+                Un chiffre
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-group">
+            <input
+              type="password"
+              name="password_confirm"
+              placeholder="Confirmer le mot de passe"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="date-label">Date de naissance</label>
+          <div class="form-row three">
+            <div class="input-group">
+              <select name="jour" required>
+                <option value="">Jour</option>
+                <script>
+                  for (let i = 1; i <= 31; i++) {
+                    document.write(`<option value="${i}">${i}</option>`);
+                  }
+                </script>
+              </select>
+            </div>
+            <div class="input-group">
+              <select name="mois" required>
+                <option value="">Mois</option>
+                <option value="1">Janvier</option>
+                <option value="2">Février</option>
+                <option value="3">Mars</option>
+                <option value="4">Avril</option>
+                <option value="5">Mai</option>
+                <option value="6">Juin</option>
+                <option value="7">Juillet</option>
+                <option value="8">Août</option>
+                <option value="9">Septembre</option>
+                <option value="10">Octobre</option>
+                <option value="11">Novembre</option>
+                <option value="12">Décembre</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <select name="annee" required>
+                <option value="">Année</option>
+                <script>
+                  for (let i = new Date().getFullYear(); i >= 1900; i--) {
+                    document.write(`<option value="${i}">${i}</option>`);
+                  }
+                </script>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="date-label">Genre</label>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="genre" value="Femme" required />
+              <span>Femme</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="genre" value="Homme" />
+              <span>Homme</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="genre" value="Personnalisé" />
+              <span>Personnalisé</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Créer un compte</button>
+      </form>
+
+      <div id="register-message" class="message" style="display: none"></div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <div class="login-link">
+        <a href="login.html">Vous avez déjà un compte ? Se connecter</a>
+      </div>
+    </div>
+
+    <script src="../../assets/js/auth.js"></script>
+    <script>
+      // Validation du mot de passe en temps réel
+      const passwordInput = document.getElementById("password");
+      const requirements = {
+        length: document.getElementById("req-length"),
+        uppercase: document.getElementById("req-uppercase"),
+        lowercase: document.getElementById("req-lowercase"),
+        number: document.getElementById("req-number"),
+      };
+
+      passwordInput.addEventListener("input", function () {
+        const password = this.value;
+
+        // Vérifier chaque exigence
+        const checks = {
+          length: password.length >= 8,
+          uppercase: /[A-Z]/.test(password),
+          lowercase: /[a-z]/.test(password),
+          number: /\d/.test(password),
+        };
+
+        // Mettre à jour l'affichage
+        Object.keys(checks).forEach((req) => {
+          const element = requirements[req];
+          if (checks[req]) {
+            element.classList.add("valid");
+            element.classList.remove("invalid");
+            element.querySelector(".requirement-icon").textContent = "✓";
+          } else {
+            element.classList.add("invalid");
+            element.classList.remove("valid");
+            element.querySelector(".requirement-icon").textContent = "•";
+          }
+        });
+      });
+
+      // Amélioration de l'expérience utilisateur
+      document.querySelectorAll("input, select").forEach((input) => {
+        input.addEventListener("focus", function () {
+          this.parentElement.style.transform = "scale(1.02)";
+        });
+
+        input.addEventListener("blur", function () {
+          this.parentElement.style.transform = "scale(1)";
+        });
+      });
+    </script>
+  </body>
+</html>

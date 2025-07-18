@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utilisateurs - Admin Facebook-like</title>
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="admin-sidebar-header">
+          <div class="admin-sidebar-logo">
+            <i class="fab fa-facebook fa-2x"></i>
+          </div>
+          <div class="admin-sidebar-title">Facebook-like Admin</div>
+        </div>
+        <nav class="admin-sidebar-nav">
+          <a href="dashboard.html" class="admin-nav-item"
+            ><i class="fa-solid fa-gauge"></i> Dashboard</a
+          >
+          <a href="users.html" class="admin-nav-item active"
+            ><i class="fa-solid fa-users"></i> Utilisateurs</a
+          >
+          <a href="#" class="admin-nav-item"
+            ><i class="fa-solid fa-newspaper"></i> Posts</a
+          >
+          <a href="#" class="admin-nav-item"
+            ><i class="fa-solid fa-comments"></i> Commentaires</a
+          >
+          <a href="#" class="admin-nav-item"
+            ><i class="fa-solid fa-thumbs-up"></i> Likes</a
+          >
+        </nav>
+      </aside>
+      <main class="admin-main">
+        <header class="admin-header">
+          <h1>Gestion des utilisateurs</h1>
+          <div class="admin-user-info">
+            <div class="admin-user-avatar" id="admin-avatar">
+              <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <span id="admin-name">Admin</span>
+            <button class="admin-logout-btn" id="admin-logout">
+              <i class="fa-solid fa-sign-out-alt"></i> Déconnexion
+            </button>
+          </div>
+        </header>
+        <section class="admin-table-container">
+          <div class="admin-table-header">
+            <div class="admin-table-title">
+              <i class="fa-solid fa-users"></i> Liste des utilisateurs
+            </div>
+            <input
+              type="text"
+              id="user-search"
+              class="admin-search"
+              placeholder="Rechercher par nom, email..."
+            />
+          </div>
+          <table class="admin-table" id="users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Date d'inscription</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Utilisateurs dynamiques ici -->
+            </tbody>
+          </table>
+          <div class="admin-pagination" id="users-pagination"></div>
+        </section>
+      </main>
+    </div>
+    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../../assets/js/admin-users.js"></script>
+  </body>
+</html>

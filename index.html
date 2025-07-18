@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Facebook-like - Réseau Social</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .welcome-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: var(--color-text);
+        text-align: center;
+        padding: 2rem;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .welcome-card {
+        background: var(--color-surface);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 600px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--color-border);
+      }
+
+      .welcome-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+      }
+
+      .welcome-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: var(--color-text-muted);
+      }
+
+      .welcome-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .welcome-btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--color-primary), #36a420);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(66, 183, 42, 0.3);
+      }
+
+      .btn-secondary {
+        background: var(--color-surface-alt);
+        color: var(--color-text);
+        border: 2px solid var(--color-border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--color-hover);
+        border-color: var(--color-primary);
+        transform: translateY(-3px);
+      }
+
+      .features {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+      }
+
+      .feature {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--color-surface-alt);
+        border-radius: 15px;
+        border: 1px solid var(--color-border);
+        transition: all 0.3s ease;
+      }
+
+      .feature:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--color-primary);
+      }
+
+      .feature i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--color-primary);
+      }
+
+      .feature h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        color: var(--color-text);
+      }
+
+      .feature p {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .welcome-title {
+          font-size: 2rem;
+        }
+
+        .welcome-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .welcome-btn {
+          width: 100%;
+          max-width: 300px;
+          justify-content: center;
+        }
+
+        .welcome-container {
+          padding: 1rem;
+        }
+
+        .welcome-card {
+          padding: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="welcome-container">
+      <div class="welcome-card">
+        <h1 class="welcome-title">
+          <i class="fab fa-facebook"></i>
+          Facebook
+        </h1>
+        <p class="welcome-subtitle">
+          Rejoignez notre réseau social et connectez-vous avec vos amis !
+        </p>
+
+        <div class="welcome-buttons">
+          <a href="vues/clients/login.html" class="welcome-btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Se connecter
+          </a>
+          <a
+            href="vues/clients/register.html"
+            class="welcome-btn btn-secondary"
+          >
+            <i class="fas fa-user-plus"></i>
+            Créer un compte
+          </a>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-comments"></i>
+            <h3>Chat en temps réel</h3>
+            <p>Discutez avec vos amis instantanément</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-users"></i>
+            <h3>Gestion d'amis</h3>
+            <p>Ajoutez et gérez vos relations</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-share-alt"></i>
+            <h3>Partage de contenu</h3>
+            <p>Publiez et partagez vos moments</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Sécurisé</h3>
+            <p>Vos données sont protégées</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Animation d'entrée
+      document.addEventListener("DOMContentLoaded", function () {
+        const card = document.querySelector(".welcome-card");
+        card.style.opacity = "0";
+        card.style.transform = "translateY(30px)";
+
+        setTimeout(() => {
+          card.style.transition = "all 0.8s ease";
+          card.style.opacity = "1";
+          card.style.transform = "translateY(0)";
+        }, 100);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Réinitialiser le mot de passe - Facebook-like</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+  </head>
+  <body>
+    <div class="login-fb-container">
+      <h1 class="fb-title">Nouveau mot de passe</h1>
+      <div id="reset-content">
+        <!-- Le contenu dynamique sera injecté ici -->
+      </div>
+      <div class="fb-link-login">
+        <a href="login.html">Retour à la connexion</a>
+      </div>
+    </div>
+    <script>
+      // Gestion du token et du formulaire
+      const params = new URLSearchParams(window.location.search);
+      const resetContent = document.getElementById("reset-content");
+      if (!params.has("token")) {
+        resetContent.innerHTML =
+          '<div id="reset-message" style="color:red;text-align:center;">Lien invalide ou expiré.</div>';
+      } else {
+        // Affiche le formulaire
+        resetContent.innerHTML = `
+            <form id="reset-form" class="fb-form">
+                <input type="hidden" name="token" value="${params.get(
+                  "token"
+                )}">
+                <input type="password" name="password" placeholder="Nouveau mot de passe" required>
+                <input type="password" name="password_confirm" placeholder="Confirmer le mot de passe" required>
+                <button type="submit" class="fb-btn-login">Réinitialiser</button>
+            </form>
+            <div id="reset-message"></div>
+        `;
+        // Gestion AJAX
+        document
+          .getElementById("reset-form")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch("../../api/auth/reset_password.php", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                const msg = document.getElementById("reset-message");
+                if (data.success) {
+                  msg.style.color = "green";
+                  msg.textContent =
+                    "Mot de passe modifié ! Redirection vers la connexion...";
+                  setTimeout(() => {
+                    window.location.href = "login.html";
+                  }, 2000);
+                } else {
+                  msg.style.color = "red";
+                  msg.textContent =
+                    data.error || "Erreur lors de la réinitialisation.";
+                }
+              })
+              .catch(() => {
+                const msg = document.getElementById("reset-message");
+                msg.style.color = "red";
+                msg.textContent = "Erreur réseau.";
+              });
+          });
+      }
+    </script>
+  </body>
+</html>

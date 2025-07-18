@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chargement...</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <style>
+      .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      .loading-spinner {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #1877f2;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <div>Connexion en cours, veuillez patienter...</div>
+    </div>
+    <script>
+      const user = sessionStorage.getItem("user");
+      setTimeout(() => {
+        if (user) {
+          window.location.href = "home.html";
+        } else {
+          window.location.href = "login.html";
+        }
+      }, 2000);
+    </script>
+  </body>
+</html>

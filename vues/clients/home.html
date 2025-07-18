@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Accueil - Facebook-like</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <!-- Suppression de FontAwesome, remplacé par les icônes SVG personnalisées -->
+  </head>
+  <body>
+    <!-- Navbar moderne et compacte réintégrée -->
+    <nav class="main-navbar compact-navbar">
+      <div class="navbar-left">
+        <img
+          src="https://icons.pqoqubbw.dev/c/facebook.json"
+          alt="Accueil"
+          class="navbar-logo"
+          style="width: 28px; height: 28px; vertical-align: middle"
+        />
+        <span class="navbar-title">Facebook-like</span>
+      </div>
+      <input
+        type="text"
+        class="navbar-search"
+        placeholder="Rechercher..."
+        style="
+          margin-left: 1.2rem;
+          min-width: 120px;
+          max-width: 220px;
+          flex: 1;
+          background: var(--color-bg-alt);
+          color: var(--color-text);
+          border: 1px solid var(--color-border);
+          border-radius: 6px;
+          padding: 0.3em 0.8em;
+          font-size: 0.98em;
+          outline: none;
+        "
+      />
+      <button class="navbar-burger" id="navbar-burger" aria-label="Menu">
+        <img
+          src="https://icons.pqoqubbw.dev/c/menu.json"
+          alt="Menu"
+          style="width: 28px; height: 28px"
+        />
+      </button>
+      <div class="navbar-links" id="navbar-links">
+        <a href="home.html" class="navbar-link" title="Accueil">
+          <img
+            src="https://icons.pqoqubbw.dev/c/home.json"
+            alt="Accueil"
+            style="width: 18px; height: 18px"
+          />
+          <span class="navbar-link-label">Accueil</span>
+        </a>
+        <a href="#" class="navbar-link" title="Amis">
+          <img
+            src="https://icons.pqoqubbw.dev/c/user-group.json"
+            alt="Amis"
+            style="width: 18px; height: 18px"
+          />
+          <span class="navbar-link-label">Amis</span>
+        </a>
+        <a href="chat.html" class="navbar-link" title="Messages">
+          <img
+            src="https://icons.pqoqubbw.dev/c/comments.json"
+            alt="Messages"
+            style="width: 18px; height: 18px"
+          />
+          <span class="navbar-link-label">Messages</span>
+        </a>
+        <a href="#" class="navbar-link" title="Groupes">
+          <img
+            src="https://icons.pqoqubbw.dev/c/users.json"
+            alt="Groupes"
+            style="width: 18px; height: 18px"
+          />
+          <span class="navbar-link-label">Groupes</span>
+        </a>
+        <a href="#" class="navbar-link" id="navbar-profile-link" title="Profil">
+          <img
+            src="https://icons.pqoqubbw.dev/c/user.json"
+            alt="Profil"
+            style="width: 18px; height: 18px"
+          />
+          <span class="navbar-link-label">Profil</span>
+        </a>
+        <button
+          id="logout-btn-navbar"
+          class="navbar-link navbar-logout"
+          title="Déconnexion"
+        >
+          <img
+            src="https://icons.pqoqubbw.dev/c/logout.json"
+            alt="Déconnexion"
+            style="width: 18px; height: 18px"
+          />
+          <span class="navbar-link-label">Déconnexion</span>
+        </button>
+      </div>
+    </nav>
+    <div class="fb-main-layout">
+      <!-- Sidebar supprimée -->
+      <main
+        class="fb-main-feed"
+        style="display: flex; justify-content: center; width: 100%"
+      >
+        <div
+          class="home-container"
+          style="
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0.5rem 0;
+          "
+        >
+          <!-- Zone de post compacte façon Facebook -->
+          <div class="fb-post-quickbox">
+            <img
+              id="quickbox-avatar"
+              class="fb-avatar fb-avatar-sm"
+              src="../../assets/images/default-avatar.png"
+              alt="avatar"
+            />
+            <div id="quickbox-placeholder" class="fb-quickbox-placeholder">
+              Quoi de neuf, <span id="quickbox-prenom">Utilisateur</span> ?
+            </div>
+          </div>
+          <div class="fb-quickbox-actions">
+            <button class="fb-quickbox-btn live" type="button">
+              <span class="icon">🎥</span> Vidéo en direct
+            </button>
+            <button class="fb-quickbox-btn photo" type="button">
+              <span class="icon">🖼️</span> Photo/Vidéo
+            </button>
+            <button class="fb-quickbox-btn mood" type="button">
+              <span class="icon">😊</span> Humeur/Activité
+            </button>
+          </div>
+          <!-- Modale de création de post -->
+          <div id="fb-post-modal" class="fb-modal" style="display: none">
+            <div class="fb-modal-content">
+              <span class="fb-modal-close" id="fb-modal-close">&times;</span>
+              <h2>Créer une publication</h2>
+              <form
+                id="post-form"
+                enctype="multipart/form-data"
+                class="fb-form"
+              >
+                <textarea
+                  name="content"
+                  placeholder="Exprimez-vous..."
+                  required
+                  style="width: 100%; min-height: 80px"
+                ></textarea>
+                <div class="fb-row">
+                  <input
+                    type="file"
+                    name="image"
+                    id="image-input"
+                    accept="image/*"
+                    style="display: none"
+                  />
+                  <label
+                    for="image-input"
+                    class="fb-btn-login"
+                    style="width: auto; cursor: pointer"
+                    >📷 Ajouter une image</label
+                  >
+                  <span id="image-filename"></span>
+                </div>
+                <div id="image-preview"></div>
+                <!-- Option humeur/activité (bonus) -->
+                <input
+                  type="text"
+                  name="mood"
+                  id="mood-input"
+                  placeholder="Humeur/Activité (optionnel)"
+                  style="width: 100%; margin-bottom: 8px"
+                />
+                <button type="submit" class="fb-btn-register">Publier</button>
+              </form>
+            </div>
+          </div>
+          <div id="feed-container">
+            <div class="loading">Chargement du flux...</div>
+          </div>
+        </div>
+      </main>
+      <aside class="fb-sidebar-right">
+        <!-- Espace pour des widgets ou suggestions plus tard -->
+      </aside>
+    </div>
+    <script src="../../assets/js/home.js"></script>
+    <script>
+      // Responsive menu burger
+      const burger = document.getElementById("navbar-burger");
+      const links = document.getElementById("navbar-links");
+      burger.addEventListener("click", function () {
+        links.classList.toggle("navbar-links-open");
+      });
+      // Remplit l'avatar et le nom dans la quickbox
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (user) {
+        document.getElementById("quickbox-prenom").textContent = user.prenom;
+        if (user.avatar) {
+          document.getElementById("quickbox-avatar").src =
+            "../../assets/images/" + user.avatar;
+        }
+        // Lien vers le profil dans la navbar
+        const profileLink = document.getElementById("navbar-profile-link");
+        if (profileLink) {
+          profileLink.href = `profile.html?user_id=${user.id}`;
+        }
+      }
+      // Ouvre la modale au clic sur la quickbox
+      document.getElementById("quickbox-placeholder").onclick = function () {
+        document.getElementById("fb-post-modal").style.display = "flex";
+      };
+      // Ferme la modale
+      document.getElementById("fb-modal-close").onclick = function () {
+        document.getElementById("fb-post-modal").style.display = "none";
+      };
+      // Ferme la modale si on clique en dehors du contenu
+      document.getElementById("fb-post-modal").onclick = function (e) {
+        if (e.target === this) this.style.display = "none";
+      };
+      // Déconnexion depuis la navbar
+      const logoutBtnNav = document.getElementById("logout-btn-navbar");
+      if (logoutBtnNav) {
+        logoutBtnNav.onclick = function () {
+          sessionStorage.removeItem("user");
+          window.location.href = "login.html";
+        };
+      }
+    </script>
+  </body>
+</html>

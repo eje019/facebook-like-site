@@ -1,0 +1,8 @@
+<code_block_to_apply_changes_from>
+/vendor/
+*.log
+*.sql
+.env
+uploads/
+cache/
+logs/

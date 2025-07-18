@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mot de passe oublié - Facebook-like</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+  </head>
+  <body>
+    <div class="login-fb-container">
+      <h1 class="fb-title">Mot de passe oublié ?</h1>
+      <form id="forgot-form" class="fb-form">
+        <input
+          type="email"
+          name="email"
+          placeholder="Votre adresse e-mail"
+          required
+        />
+        <button type="submit" class="fb-btn-login">
+          Envoyer le lien de réinitialisation
+        </button>
+      </form>
+      <div id="forgot-message"></div>
+      <div class="fb-link-login">
+        <a href="login.html">Retour à la connexion</a>
+      </div>
+    </div>
+    <script src="../../assets/js/auth.js"></script>
+  </body>
+</html>
