@@ -157,6 +157,7 @@ facebook-like-site/
 ```
 
 ## 🚀 **Installation Rapide**
+<<<<<<< HEAD
 
 ### **1. Prérequis**
 
@@ -166,6 +167,8 @@ facebook-like-site/
 - **Composer** (pour les dépendances)
 
 ### **2. Installation**
+=======
+>>>>>>> 91319936abf7bc1d15d4c6fc7a8156d0b41a5ea9
 
 ```bash
 # 1. Cloner le projet
@@ -187,9 +190,15 @@ source database/admin_roles.sql;
 cp config.php.example config.php
 # Éditer config.php avec vos paramètres
 ```
+<<<<<<< HEAD
 
 ### **3. Configuration**
 
+=======
+
+### **Configuration**
+
+>>>>>>> 91319936abf7bc1d15d4c6fc7a8156d0b41a5ea9
 Modifiez `config.php` :
 
 ```php
@@ -335,10 +344,13 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 4. **Poussez** vers la branche
 5. **Ouvrez** une Pull Request
 
+<<<<<<< HEAD
 ## 📄 **Licence**
 
 Ce projet est sous licence **MIT**. Voir le fichier `LICENSE` pour plus de détails.
 
+=======
+>>>>>>> 91319936abf7bc1d15d4c6fc7a8156d0b41a5ea9
 ## 🙏 **Remerciements**
 
 - **Facebook** pour l'inspiration de l'interface
@@ -351,8 +363,13 @@ Ce projet est sous licence **MIT**. Voir le fichier `LICENSE` pour plus de déta
 Pour toute question ou problème :
 
 - 📧 **Email** : support@example.com
+<<<<<<< HEAD
 - 🐛 **Issues** : [GitHub Issues](https://github.com/votre-username/facebook-like-site/issues)
 - 📖 **Documentation** : [Wiki](https://github.com/votre-username/facebook-like-site/wiki)
+=======
+- 🐛 **Issues** : [GitHub Issues](https://github.com/eje019/facebook-like-site/issues)
+- 📖 **Documentation** : [Wiki](https://github.com/eje019/facebook-like-site/wiki)
+>>>>>>> 91319936abf7bc1d15d4c6fc7a8156d0b41a5ea9
 
 ---
 

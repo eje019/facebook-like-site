@@ -163,6 +163,7 @@ body {
   background: var(--color-bg, #181a1b);
 }
 
+<<<<<<< HEAD
 .admin-sidebar {
   background: var(--color-surface, #22262a);
   border-radius: 16px 0 0 16px;
@@ -186,6 +187,36 @@ body {
   font-size: 1.15em;
   font-weight: 600;
 }
+=======
+/* Thème sombre harmonisé pour le back-office */
+body, .admin-layout {
+  background: var(--color-bg, #181a1b) !important;
+  color: var(--color-text, #f1f3f4) !important;
+}
+.admin-sidebar {
+  background: var(--color-surface, #22262a) !important;
+  border-radius: 16px 0 0 16px;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.10);
+  min-width: 220px;
+  padding: 0;
+  border-right: 1.5px solid var(--color-border, #31363b);
+}
+.admin-sidebar-header {
+  padding: 2em 1em 1em 1em;
+  border-bottom: 1px solid var(--color-border, #31363b);
+  text-align: center;
+}
+.admin-sidebar-logo {
+  color: var(--color-primary, #42b72a);
+  font-size: 2em;
+  margin-bottom: 0.5em;
+}
+.admin-sidebar-title {
+  color: var(--color-primary, #42b72a);
+  font-size: 1.15em;
+  font-weight: 600;
+}
+>>>>>>> 91319936abf7bc1d15d4c6fc7a8156d0b41a5ea9
 .admin-sidebar-nav {
   padding: 1.5em 0;
 }
