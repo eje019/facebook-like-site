@@ -1,54 +1,52 @@
 <!DOCTYPE html>
-<html lang=fr>
-<head>
-    <meta charset=UTF-8>
-    <meta name=viewport" content="width=device-width, initial-scale=1.0">
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Administration - Facebook-like</title>
-    <link rel="stylesheet" href="../../assets/css/admin.css>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.40.2css/all.min.css></head>
-<body>
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+  </head>
+  <body>
     <div class="admin-login-container">
-        <div class="admin-login-card">
-            <div class="admin-login-header>
-                <i class="fab fa-facebook fa-3 admin-logo"></i>
-                <h1>Administration</h1
-                <p>Connectez-vous pour accéder au panneau dadministration</p>
-            </div>
-            
-            <form id=admin-login-formclass="admin-login-form>
-                <div class="admin-form-group">
-                    <label for="email">
-                        <i class="fas fa-envelope"></i>
-                        Email
-                    </label>
-                    <input type=email" id="email" name=emaild>
-                </div>
-                
-                <div class="admin-form-group">
-                    <label for="password">
-                        <i class="fas fa-lock"></i>
-                        Mot de passe
-                    </label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                
-                <button type="submit class="admin-btn-login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Se connecter
-                </button>
-            </form>
-            
-            <div id="admin-login-message" class=admin-message"></div>
-            
-            <div class="admin-login-footer>
-                <a href="../clients/login.html" class="admin-link-back">
-                    <i class=fas fa-arrow-left"></i>
-                    Retour au site
-                </a>
-            </div>
+      <div class="admin-login-card">
+        <div class="admin-login-header">
+          <i class="fab fa-facebook fa-3x admin-logo"></i>
+          <h1>Administration</h1>
+          <p>Connectez-vous pour accéder au panneau d'administration</p>
         </div>
+        <form id="admin-login-form" class="admin-login-form">
+          <div class="admin-form-group">
+            <label for="email">
+              <i class="fas fa-envelope"></i>
+              Email
+            </label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="admin-form-group">
+            <label for="password">
+              <i class="fas fa-lock"></i>
+              Mot de passe
+            </label>
+            <input type="password" id="password" name="password" required />
+          </div>
+          <button type="submit" class="admin-btn-login">
+            <i class="fas fa-sign-in-alt"></i>
+            Se connecter
+          </button>
+        </form>
+        <div id="admin-login-message" class="admin-message"></div>
+        <div class="admin-login-footer">
+          <a href="../clients/login.html" class="admin-link-back">
+            <i class="fas fa-arrow-left"></i>
+            Retour au site
+          </a>
+        </div>
+      </div>
     </div>
-    
-    <script src="../../assets/js/admin-login.js></script>
-</body>
-</html> 
+    <script src="../../assets/js/admin-login.js"></script>
+  </body>
+</html>

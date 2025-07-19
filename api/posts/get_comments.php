@@ -8,7 +8,8 @@ if(empty($_GET['post_id'])) {
 $post_id = (int)$_GET['post_id'];
 
 try {
-    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
     $sql = "SELECT c.id, c.user_id, u.prenom, u.nom, u.avatar, c.content, c.created_at
             FROM comments c
             JOIN users u ON c.user_id = u.id

@@ -555,3 +555,346 @@ button:active,
   margin-bottom: 1rem;
   color: var(--color-primary);
 }
+
+.chat-message img {
+  max-width: 180px;
+  border-radius: 8px;
+  margin-top: 0.5em;
+  display: block;
+}
+
+/* Sidebar amis moderne */
+.fb-sidebar {
+  background: var(--color-surface);
+  border-radius: 16px;
+  margin: 2em 1em 2em 2em;
+  padding: 2em 1em 2em 1em;
+  min-width: 220px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.fb-sidebar-link {
+  display: block;
+  color: var(--color-text);
+  background: none;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9em 1.2em;
+  margin: 0.3em 0;
+  font-size: 1.08em;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+}
+.fb-sidebar-link.active,
+.fb-sidebar-link:focus {
+  background: var(--color-primary);
+  color: #fff;
+}
+.fb-sidebar-link:hover {
+  background: var(--color-btn-hover);
+  color: var(--color-primary);
+}
+
+/* Cartes utilisateurs amis */
+.friend-item {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface-alt);
+  border-radius: 12px;
+  padding: 1em 1.2em;
+  margin-bottom: 1em;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  gap: 1.2em;
+}
+.friend-item .fb-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+.friend-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--color-text);
+  font-size: 1.08em;
+}
+.fb-btn-accept,
+.fb-btn-refuse,
+.fb-btn-add,
+.fb-btn-remove,
+.fb-btn-profile {
+  border-radius: 8px;
+  padding: 0.5em 1.1em;
+  margin-left: 0.5em;
+  font-size: 1em;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.fb-btn-accept {
+  background: var(--color-primary);
+  color: #fff;
+}
+.fb-btn-accept:hover {
+  background: var(--color-primary-dark);
+}
+.fb-btn-refuse {
+  background: var(--color-danger);
+  color: #fff;
+}
+.fb-btn-refuse:hover {
+  background: #b71c1c;
+}
+.fb-btn-add {
+  background: var(--color-accent);
+  color: #fff;
+}
+.fb-btn-add:hover {
+  background: #1251a3;
+}
+.fb-btn-remove {
+  background: var(--color-btn-bg);
+  color: var(--color-danger);
+  border: 1.5px solid var(--color-danger);
+}
+.fb-btn-remove:hover {
+  background: var(--color-danger);
+  color: #fff;
+}
+.fb-btn-profile {
+  background: var(--color-btn-bg);
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-primary);
+}
+.fb-btn-profile:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+@media (max-width: 900px) {
+  .fb-main-layout {
+    flex-direction: column;
+  }
+  .fb-sidebar {
+    min-width: 100%;
+    margin: 0 0 1em 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1em 0.5em;
+  }
+}
+
+/* Styles pour les likes et dislikes */
+.like-btn,
+.dislike-btn {
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  font-size: 14px !important;
+  color: var(--color-text-muted) !important;
+}
+
+.like-btn:hover,
+.dislike-btn:hover {
+  background: rgba(24, 119, 242, 0.1) !important;
+  color: var(--color-primary) !important;
+}
+
+.like-btn.liked {
+  background: rgba(24, 119, 242, 0.1) !important;
+  color: var(--color-primary) !important;
+  font-weight: 600 !important;
+}
+
+.dislike-btn.disliked {
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+  font-weight: 600 !important;
+}
+
+.dislike-btn:hover {
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+/* Styles pour les commentaires */
+.fb-comments-form {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--color-bg-alt);
+  border-radius: 8px;
+}
+
+.fb-comments-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 60px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+}
+
+.fb-comments-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.fb-comments-form button {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.fb-comments-form button:hover {
+  background: var(--color-primary-dark);
+}
+
+.fb-comments-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.fb-comment {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.fb-comment:last-child {
+  border-bottom: none;
+}
+
+.fb-comment-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.fb-comment-header img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+}
+
+.fb-comment-content {
+  margin-left: 40px;
+  margin-top: 4px;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.fb-comment-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  resize: vertical;
+  min-height: 60px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+}
+
+.fb-comment-textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.fb-comment-btn {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.fb-comment-btn:hover {
+  background: var(--color-primary-dark);
+}
+
+.fb-comment-author {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.fb-comment-date {
+  color: var(--color-text-muted);
+  font-size: 0.9em;
+  margin-left: 8px;
+}
+
+.fb-comment-date i {
+  margin-right: 4px;
+}
+
+/* Styles pour les boutons d'action des posts */
+.fb-post-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+  margin-top: 12px;
+}
+
+.fb-post-actions button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  background: none;
+}
+
+.fb-post-actions button:hover {
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+}
+
+.fb-post-actions button i {
+  font-size: 16px;
+}
+
+/* Animation pour les likes/dislikes */
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.like-btn.liked,
+.dislike-btn.disliked {
+  animation: likeAnimation 0.3s ease;
+}

@@ -36,6 +36,11 @@
         color: var(--color-text);
         margin-bottom: 0.5rem;
       }
+      .profile-email {
+        color: var(--color-text-muted);
+        font-size: 1.08em;
+        margin-bottom: 0.5rem;
+      }
       .profile-actions {
         margin-top: 1rem;
       }
@@ -68,6 +73,31 @@
     </style>
   </head>
   <body>
+    <nav class="main-navbar compact-navbar">
+      <div class="navbar-left">
+        <img
+          src="https://icons.pqoqubbw.dev/c/facebook.json"
+          alt="Accueil"
+          class="navbar-logo"
+          style="width: 28px; height: 28px"
+        />
+        <span class="navbar-title">Facebook-like</span>
+      </div>
+      <div class="navbar-links" id="navbar-links">
+        <a href="home.html" class="navbar-link">Accueil</a>
+        <a href="friends.html" class="navbar-link">Amis</a>
+        <a href="chat.html" class="navbar-link">Messages</a>
+        <a
+          href="profile.html"
+          class="navbar-link active"
+          id="navbar-profile-link"
+          >Profil</a
+        >
+        <button id="logout-btn-navbar" class="navbar-link navbar-logout">
+          Déconnexion
+        </button>
+      </div>
+    </nav>
     <div
       class="container"
       style="max-width: 700px; margin: 40px auto 0 auto; padding: 2rem"
@@ -81,7 +111,15 @@
         />
         <div class="profile-info">
           <div id="profile-name" class="profile-name">Utilisateur inconnu</div>
+          <div id="profile-email" class="profile-email"></div>
           <div class="profile-actions">
+            <button id="edit-btn" class="profile-btn" style="display: none">
+              <i class="fa-solid fa-user-pen"></i> Mettre à jour mes infos
+            </button>
+            <button id="friend-btn" class="profile-btn" style="display: none">
+              <i class="fa-solid fa-user-plus"></i>
+              <span id="friend-btn-text">Ajouter en ami</span>
+            </button>
             <button id="message-btn" class="profile-btn">
               <i class="fa-solid fa-paper-plane"></i> Envoyer un message
             </button>
@@ -92,6 +130,21 @@
       <div id="profile-posts" class="profile-posts-list"></div>
     </div>
     <script>
+      // Navbar : lien profil dynamique et déconnexion
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (user) {
+        const profileLink = document.getElementById("navbar-profile-link");
+        if (profileLink) {
+          profileLink.href = `profile.html?user_id=${user.id}`;
+        }
+        const logoutBtnNav = document.getElementById("logout-btn-navbar");
+        if (logoutBtnNav) {
+          logoutBtnNav.onclick = function () {
+            sessionStorage.removeItem("user");
+            window.location.href = "login.html";
+          };
+        }
+      }
       // Récupère l'user_id dans l'URL
       function getUserId() {
         const params = new URLSearchParams(window.location.search);
@@ -104,7 +157,12 @@
         document.getElementById("profile-posts").innerHTML = "";
       } else {
         // Récupère les infos utilisateur
-        fetch("../../api/users/get_user.php?user_id=" + userId)
+        fetch(
+          "../../api/users/get_user.php?user_id=" +
+            userId +
+            "&current_user_id=" +
+            (user ? user.id : "")
+        )
           .then((r) => r.json())
           .then((data) => {
             if (data.success && data.user) {
@@ -113,9 +171,65 @@
               document.getElementById("profile-avatar").src =
                 "../../assets/images/" +
                 (data.user.avatar || "default-avatar.png");
+              document.getElementById("profile-email").textContent =
+                data.user.email;
+
+              // Gestion du bouton message
               document.getElementById("message-btn").onclick = function () {
                 window.location.href = "chat.html?user_id=" + userId;
               };
+
+              // Gestion du bouton ami selon le statut
+              const friendBtn = document.getElementById("friend-btn");
+              const friendBtnText = document.getElementById("friend-btn-text");
+
+              if (user && user.id != userId) {
+                friendBtn.style.display = "inline-block";
+
+                switch (data.user.friend_status) {
+                  case "none":
+                    friendBtnText.textContent = "Ajouter en ami";
+                    friendBtn.onclick = function () {
+                      sendFriendRequest(user.id, userId);
+                    };
+                    break;
+                  case "pending_sent":
+                    friendBtnText.textContent = "Invitation envoyée";
+                    friendBtn.disabled = true;
+                    friendBtn.style.background = "#666";
+                    break;
+                  case "pending_received":
+                    friendBtnText.textContent = "Répondre à l'invitation";
+                    friendBtn.onclick = function () {
+                      showInvitationResponse(userId);
+                    };
+                    break;
+                  case "friend":
+                    friendBtnText.textContent = "Ami";
+                    friendBtn.disabled = true;
+                    friendBtn.style.background = "#28a745";
+                    break;
+                  case "refused":
+                    friendBtnText.textContent = "Réinviter";
+                    friendBtn.onclick = function () {
+                      sendFriendRequest(user.id, userId);
+                    };
+                    break;
+                }
+              } else {
+                friendBtn.style.display = "none";
+              }
+
+              // Affiche le bouton édition seulement si c'est le profil connecté
+              if (user && user.id == userId) {
+                document.getElementById("edit-btn").style.display =
+                  "inline-block";
+                document.getElementById("edit-btn").onclick = function () {
+                  window.location.href = "edit_profile.html";
+                };
+              } else {
+                document.getElementById("edit-btn").style.display = "none";
+              }
             } else {
               document.getElementById("profile-header").innerHTML =
                 '<div style="color:red">Utilisateur introuvable.</div>';
@@ -161,6 +275,86 @@
                 '<div style="text-align:center;">Aucun post pour cet utilisateur.</div>';
             }
           });
+      }
+
+      // Fonction pour envoyer une invitation d'amis
+      function sendFriendRequest(fromUserId, toUserId) {
+        fetch("../../api/users/send_friend_request.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            user_id: fromUserId,
+            friend_id: toUserId,
+          }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.success) {
+              alert("Invitation d'amis envoyée !");
+              // Met à jour le bouton
+              const friendBtn = document.getElementById("friend-btn");
+              const friendBtnText = document.getElementById("friend-btn-text");
+              friendBtnText.textContent = "Invitation envoyée";
+              friendBtn.disabled = true;
+              friendBtn.style.background = "#666";
+            } else {
+              alert(data.error || "Erreur lors de l'envoi de l'invitation.");
+            }
+          })
+          .catch(() => alert("Erreur réseau."));
+      }
+
+      // Fonction pour afficher la réponse à une invitation
+      function showInvitationResponse(fromUserId) {
+        const response = confirm(
+          "Voulez-vous accepter cette invitation d'amis ?\n\nCliquez sur OK pour accepter, ou Annuler pour refuser."
+        );
+
+        const action = response ? "accept" : "refuse";
+
+        fetch("../../api/users/respond_friend_request.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({
+            user_id: user.id,
+            friend_id: fromUserId,
+            action: action,
+          }),
+        })
+          .then((r) => r.json())
+          .then((data) => {
+            if (data.success) {
+              if (action === "accept") {
+                alert("Invitation acceptée ! Vous êtes maintenant amis.");
+                // Met à jour le bouton
+                const friendBtn = document.getElementById("friend-btn");
+                const friendBtnText =
+                  document.getElementById("friend-btn-text");
+                friendBtnText.textContent = "Ami";
+                friendBtn.disabled = true;
+                friendBtn.style.background = "#28a745";
+              } else {
+                alert("Invitation refusée.");
+                // Met à jour le bouton
+                const friendBtn = document.getElementById("friend-btn");
+                const friendBtnText =
+                  document.getElementById("friend-btn-text");
+                friendBtnText.textContent = "Réinviter";
+                friendBtn.disabled = false;
+                friendBtn.style.background = "";
+                friendBtn.onclick = function () {
+                  sendFriendRequest(user.id, fromUserId);
+                };
+              }
+            } else {
+              alert(data.error || "Erreur lors de la réponse à l'invitation.");
+            }
+          })
+          .catch(() => alert("Erreur réseau."));
       }
     </script>
   </body>

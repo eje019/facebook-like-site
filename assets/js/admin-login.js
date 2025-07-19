@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           email: email,
           password: password,
@@ -51,10 +52,10 @@ document.addEventListener("DOMContentLoaded", function () {
           })
         );
 
-        // Redirection vers le dashboard
+        // Redirection vers la page de loading
         setTimeout(() => {
-          window.location.href = "dashboard.html";
-        }, 1000);
+          window.location.href = "loading.html";
+        }, 500);
       } else {
         showMessage(data.error || "Erreur de connexion", "error");
       }

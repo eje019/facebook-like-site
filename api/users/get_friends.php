@@ -8,7 +8,8 @@ if(empty($_GET['user_id'])) {
 $user_id = (int)$_GET['user_id'];
 
 try {
-    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
     $sql = "SELECT u.id, u.prenom, u.nom, u.avatar
             FROM users u
             JOIN friendships f ON (

@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const userData = JSON.parse(user);
 
   // Déconnexion
-  const logoutBtn = document.getElementById("logout-btn");
+  const logoutBtn = document.getElementById("logout-btn-navbar");
   if (logoutBtn) {
     logoutBtn.onclick = function () {
       sessionStorage.removeItem("user");
@@ -23,19 +23,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const imageInput = document.getElementById("image-input");
     const imagePreview = document.getElementById("image-preview");
     const imageFilename = document.getElementById("image-filename");
-    imageInput.addEventListener("change", function () {
-      if (this.files && this.files[0]) {
-        imageFilename.textContent = this.files[0].name;
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          imagePreview.innerHTML = `<img src='${e.target.result}' style='max-width:120px;max-height:120px;border-radius:8px;margin:8px 0;'>`;
-        };
-        reader.readAsDataURL(this.files[0]);
-      } else {
-        imageFilename.textContent = "";
-        imagePreview.innerHTML = "";
-      }
-    });
+
+    if (imageInput && imagePreview && imageFilename) {
+      imageInput.addEventListener("change", function () {
+        if (this.files && this.files[0]) {
+          imageFilename.textContent = this.files[0].name;
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            imagePreview.innerHTML = `<img src='${e.target.result}' style='max-width:120px;max-height:120px;border-radius:8px;margin:8px 0;'>`;
+          };
+          reader.readAsDataURL(this.files[0]);
+        } else {
+          imageFilename.textContent = "";
+          imagePreview.innerHTML = "";
+        }
+      });
+    }
+
     postForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const formData = new FormData(postForm);
@@ -48,9 +52,12 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
           if (data.success) {
             postForm.reset();
-            imagePreview.innerHTML = "";
-            imageFilename.textContent = "";
+            if (imagePreview) imagePreview.innerHTML = "";
+            if (imageFilename) imageFilename.textContent = "";
             loadFeed();
+            // Ferme la modale après publication
+            const modal = document.getElementById("fb-post-modal");
+            if (modal) modal.style.display = "none";
           } else {
             alert(data.error || "Erreur lors de la publication.");
           }
@@ -65,6 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((r) => r.json())
       .then((data) => {
         const container = document.getElementById(`comments-${postId}`);
+        if (!container) {
+          console.error(`Container comments-${postId} not found`);
+          return;
+        }
         if (!data.success) {
           container.innerHTML =
             '<div style="color:red;padding:10px;">Erreur lors du chargement des commentaires.</div>';
@@ -73,15 +84,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let commentsHtml = `
           <div class="fb-comments-form">
-            <textarea id="comment-input-${postId}" placeholder="Écrivez un commentaire..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;resize:vertical;min-height:60px;"></textarea>
-            <button onclick="addComment(${postId})" style="margin-top:8px;padding:8px 16px;background:#1877f2;color:white;border:none;border-radius:8px;cursor:pointer;">Commenter</button>
+            <textarea id="comment-input-${postId}" placeholder="Écrivez un commentaire..." class="fb-comment-textarea"></textarea>
+            <button onclick="addComment(${postId})" class="fb-comment-btn">
+              <i class="fas fa-paper-plane"></i> Commenter
+            </button>
           </div>
           <div class="fb-comments-list">
         `;
 
         if (data.comments.length === 0) {
           commentsHtml +=
-            '<div style="text-align:center;padding:20px;color:#666;">Aucun commentaire pour le moment.</div>';
+            '<div style="text-align:center;padding:20px;color:var(--color-text-muted);"><i class="fas fa-comment-slash"></i> Aucun commentaire pour le moment.</div>';
         } else {
           data.comments.forEach((comment) => {
             commentsHtml += `
@@ -89,15 +102,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="fb-comment-header">
                   <img src="../../assets/images/${
                     comment.avatar || "default-avatar.png"
-                  }" style="width:32px;height:32px;border-radius:50%;margin-right:8px;">
-                  <span style="font-weight:bold;">${comment.prenom} ${
+                  }" alt="avatar">
+                  <span class="fb-comment-author">${comment.prenom} ${
               comment.nom
             }</span>
-                  <span style="color:#666;font-size:0.9em;margin-left:8px;">${new Date(
+                  <span class="fb-comment-date"><i class="fas fa-clock"></i> ${new Date(
                     comment.created_at
                   ).toLocaleString("fr-FR")}</span>
                 </div>
-                <div class="fb-comment-content" style="margin-left:40px;margin-top:4px;">
+                <div class="fb-comment-content">
                   ${comment.content.replace(/\n/g, "<br>")}
                 </div>
               </div>
@@ -110,14 +123,21 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch(() => {
         const container = document.getElementById(`comments-${postId}`);
-        container.innerHTML =
-          '<div style="color:red;padding:10px;">Erreur réseau.</div>';
+        if (container) {
+          container.innerHTML =
+            '<div style="color:red;padding:10px;">Erreur réseau.</div>';
+        }
       });
   }
 
   // Fonction pour ajouter un commentaire (globale pour être accessible depuis onclick)
   window.addComment = function (postId) {
     const input = document.getElementById(`comment-input-${postId}`);
+    if (!input) {
+      console.error(`Comment input for post ${postId} not found`);
+      return;
+    }
+
     const content = input.value.trim();
 
     if (!content) {
@@ -140,8 +160,52 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((data) => {
         if (data.success) {
           input.value = "";
-          loadComments(postId);
-          loadFeed(); // Recharge le feed pour mettre à jour le compteur de commentaires
+
+          // Ajoute le nouveau commentaire directement dans l'interface
+          const commentsList = document.querySelector(
+            `#comments-${postId} .fb-comments-list`
+          );
+          if (commentsList && data.comment) {
+            const newCommentHtml = `
+              <div class="fb-comment">
+                <div class="fb-comment-header">
+                  <img src="../../assets/images/${
+                    data.comment.avatar || "default-avatar.png"
+                  }" alt="avatar">
+                  <span class="fb-comment-author">${data.comment.prenom} ${
+              data.comment.nom
+            }</span>
+                  <span class="fb-comment-date"><i class="fas fa-clock"></i> ${new Date(
+                    data.comment.created_at
+                  ).toLocaleString("fr-FR")}</span>
+                </div>
+                <div class="fb-comment-content">
+                  ${data.comment.content.replace(/\n/g, "<br>")}
+                </div>
+              </div>
+            `;
+            commentsList.insertAdjacentHTML("beforeend", newCommentHtml);
+
+            // Met à jour le compteur de commentaires
+            const toggleBtn = document.querySelector(
+              `[data-id="${postId}"].toggle-comments-btn`
+            );
+            if (toggleBtn) {
+              const currentText = toggleBtn.innerHTML;
+              const match = currentText.match(/(\d+)/);
+              if (match) {
+                const currentCount = parseInt(match[1]);
+                toggleBtn.innerHTML = `<i class="fas fa-comment"></i> ${
+                  currentCount + 1
+                } commentaire(s)`;
+              }
+            }
+
+            // Scroll vers le bas pour voir le nouveau commentaire
+            setTimeout(() => {
+              commentsList.scrollTop = commentsList.scrollHeight;
+            }, 100);
+          }
         } else {
           alert(data.error || "Erreur lors de l'ajout du commentaire.");
         }
@@ -181,6 +245,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((r) => r.json())
       .then((data) => {
         const feed = document.getElementById("feed-container");
+        if (!feed) {
+          console.error("Feed container not found");
+          return;
+        }
+
         if (!data.success) {
           feed.innerHTML =
             '<div style="color:red;text-align:center;">Erreur lors du chargement du flux.</div>';
@@ -234,27 +303,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="fb-post-actions">
                     <button class="like-btn${
                       post.user_like === "like" ? " liked" : ""
-                    }" data-id="${
-            post.id
-          }" data-type="like" style="background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:8px;transition:background 0.3s;">
-                      👍 ${post.likes}
+                    }" data-id="${post.id}" data-type="like">
+                      <i class="fas fa-thumbs-up"></i> ${post.likes}
                     </button>
                     <button class="dislike-btn${
                       post.user_like === "dislike" ? " disliked" : ""
-                    }" data-id="${
-            post.id
-          }" data-type="dislike" style="background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:8px;transition:background 0.3s;">
-                      👎 ${post.dislikes}
+                    }" data-id="${post.id}" data-type="dislike">
+                      <i class="fas fa-thumbs-down"></i> ${post.dislikes}
                     </button>
-                    <button class="toggle-comments-btn" data-id="${
-                      post.id
-                    }" style="background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:8px;transition:background 0.3s;">
-                      💬 ${post.comments} commentaire(s)
+                    <button class="toggle-comments-btn" data-id="${post.id}">
+                      <i class="fas fa-comment"></i> ${
+                        post.comments
+                      } commentaire(s)
                     </button>
-                    <button class="share-btn" onclick="sharePost(${
-                      post.id
-                    })" style="background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:8px;transition:background 0.3s;">
-                      📤 Partager
+                    <button class="share-btn" onclick="sharePost(${post.id})">
+                      <i class="fas fa-share"></i> Partager
                     </button>
                 </div>
                 <div class="fb-comments-container" id="comments-${
@@ -266,9 +329,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Listeners like/dislike avec styles hover
         document.querySelectorAll(".like-btn, .dislike-btn").forEach((btn) => {
+          if (!btn) return; // Skip if button is null
+
           btn.onclick = function () {
             const postId = this.getAttribute("data-id");
             const type = this.getAttribute("data-type");
+            const likeBtn = this.parentElement.querySelector(".like-btn");
+            const dislikeBtn = this.parentElement.querySelector(".dislike-btn");
+
+            if (!postId || !type) {
+              console.error("Missing postId or type for like/dislike button");
+              return;
+            }
+
             fetch("../../api/posts/like_post.php", {
               method: "POST",
               headers: {
@@ -282,8 +355,28 @@ document.addEventListener("DOMContentLoaded", function () {
             })
               .then((r) => r.json())
               .then((data) => {
-                if (data.success) loadFeed();
-                else alert(data.error || "Erreur like/dislike");
+                if (data.success) {
+                  // Met à jour les compteurs et l'état sans reload global
+                  if (likeBtn) likeBtn.innerHTML = `👍 ${data.likes}`;
+                  if (dislikeBtn) dislikeBtn.innerHTML = `👎 ${data.dislikes}`;
+                  if (type === "like") {
+                    if (data.action === "added" || data.action === "updated") {
+                      if (likeBtn) likeBtn.classList.add("liked");
+                      if (dislikeBtn) dislikeBtn.classList.remove("disliked");
+                    } else {
+                      if (likeBtn) likeBtn.classList.remove("liked");
+                    }
+                  } else {
+                    if (data.action === "added" || data.action === "updated") {
+                      if (dislikeBtn) dislikeBtn.classList.add("disliked");
+                      if (likeBtn) likeBtn.classList.remove("liked");
+                    } else {
+                      if (dislikeBtn) dislikeBtn.classList.remove("disliked");
+                    }
+                  }
+                } else {
+                  alert(data.error || "Erreur like/dislike");
+                }
               });
           };
 
@@ -298,9 +391,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Listeners toggle commentaires
         document.querySelectorAll(".toggle-comments-btn").forEach((btn) => {
+          if (!btn) return; // Skip if button is null
+
           btn.onclick = function () {
             const postId = this.getAttribute("data-id");
+            if (!postId) {
+              console.error("Missing postId for toggle comments button");
+              return;
+            }
+
             const container = document.getElementById("comments-" + postId);
+            if (!container) {
+              console.error(`Comments container for post ${postId} not found`);
+              return;
+            }
+
             if (container.style.display === "none") {
               loadComments(postId);
               container.style.display = "block";
@@ -320,6 +425,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Effet hover pour le bouton partager
         document.querySelectorAll(".share-btn").forEach((btn) => {
+          if (!btn) return; // Skip if button is null
+
           btn.onmouseenter = function () {
             this.style.background = "#f0f2f5";
           };

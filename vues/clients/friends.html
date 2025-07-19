@@ -4,78 +4,112 @@
     <meta charset="UTF-8" />
     <title>Ami(e)s - Facebook-like</title>
     <link rel="stylesheet" href="../../assets/css/style.css" />
+    <link rel="stylesheet" href="../../assets/css/style-enhanced.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     />
   </head>
   <body>
-    <div class="fb-navbar">
-      <div class="fb-navbar-left">
-        <i class="fab fa-facebook fa-2x fb-logo"></i>
-        <span class="fb-title">Facebook-like</span>
-      </div>
-      <div class="fb-navbar-center">
-        <input
-          type="text"
-          class="fb-search"
-          placeholder="Rechercher sur Facebook-like..."
+    <nav class="main-navbar compact-navbar">
+      <div class="navbar-left">
+        <img
+          src="https://icons.pqoqubbw.dev/c/facebook.json"
+          alt="Accueil"
+          class="navbar-logo"
+          style="width: 28px; height: 28px"
         />
+        <span class="navbar-title">Facebook-like</span>
       </div>
-      <div class="fb-navbar-right">
-        <a href="chat.html" class="fb-navbar-link" style="margin-right: 15px;">
-          <i class="fa-solid fa-comments"></i> Messages <span class="chat-badge" style="display: none;">0</span>
-        </a>
-        <button id="logout-btn" class="fb-btn-login" style="width: auto">
+      <div class="navbar-links" id="navbar-links">
+        <a href="home.html" class="navbar-link">Accueil</a>
+        <a href="friends.html" class="navbar-link active">Amis</a>
+        <a href="chat.html" class="navbar-link">Messages</a>
+        <a href="profile.html" class="navbar-link" id="navbar-profile-link"
+          >Profil</a
+        >
+        <button id="logout-btn-navbar" class="navbar-link navbar-logout">
           Déconnexion
         </button>
       </div>
-    </div>
-    <div class="fb-main-layout">
-      <aside class="fb-friends-sidebar">
-        <h2 class="fb-friends-sidebar-title">
-          <i class="fa-solid fa-user-group"></i> Ami(e)s
-        </h2>
-        <nav class="fb-friends-sidebar-nav">
-          <a
-            href="#"
-            class="fb-friends-sidebar-link active"
-            data-section="accueil"
-            ><i class="fa-solid fa-house"></i> Accueil</a
+    </nav>
+    <div class="fb-main-layout" style="display: flex">
+      <aside class="fb-sidebar" style="min-width: 220px">
+        <h2 style="margin: 1em 0 0.5em 1em">Gestion des amis</h2>
+        <nav>
+          <a href="#" class="fb-sidebar-link active" data-section="invitations"
+            >Invitations reçues</a
           >
-          <a href="#" class="fb-friends-sidebar-link" data-section="invitations"
-            ><i class="fa-solid fa-user-plus"></i> Invitations</a
+          <a href="#" class="fb-sidebar-link" data-section="suggestions"
+            >Suggestions</a
           >
-          <a href="#" class="fb-friends-sidebar-link" data-section="suggestions"
-            ><i class="fa-solid fa-user-plus"></i> Suggestions</a
+          <a href="#" class="fb-sidebar-link" data-section="all"
+            >Tous les utilisateurs</a
           >
-          <a href="#" class="fb-friends-sidebar-link" data-section="tous"
-            ><i class="fa-solid fa-users"></i> Tou(te)s les ami(e)s</a
-          >
-          <a
-            href="#"
-            class="fb-friends-sidebar-link"
-            data-section="anniversaires"
-            ><i class="fa-solid fa-gift"></i> Anniversaires</a
-          >
-          <a href="#" class="fb-friends-sidebar-link" data-section="listes"
-            ><i class="fa-solid fa-list"></i> Listes personnalisées</a
+          <a href="#" class="fb-sidebar-link" data-section="friends"
+            >Mes amis</a
           >
         </nav>
       </aside>
-      <main class="fb-friends-main">
-        <div id="friends-content" class="fb-friends-content">
-          <div class="fb-friends-empty">
-            <i class="fa-solid fa-users fa-3x" style="color: #b0b8c1"></i>
-            <p style="color: #555; font-size: 1.15em; margin-top: 18px">
-              Quand vous recevrez des invitations et des suggestions d’ami(e)s,
-              vous les verrez ici.
-            </p>
-          </div>
+      <main class="fb-friends-main" style="flex: 1; min-width: 0">
+        <section
+          id="section-invitations"
+          class="friends-section"
+          style="display: none"
+        >
+          <h3>Invitations reçues</h3>
+          <div id="invitations-list"></div>
+        </section>
+        <section
+          id="section-suggestions"
+          class="friends-section"
+          style="display: none"
+        >
+          <h3>Suggestions d'amis</h3>
+          <div id="suggestions-list"></div>
+        </section>
+        <section id="section-all" class="friends-section" style="display: none">
+          <h3>Tous les utilisateurs</h3>
+          <div id="all-users-list"></div>
+        </section>
+        <section
+          id="section-friends"
+          class="friends-section"
+          style="display: none"
+        >
+          <h3>Mes amis</h3>
+          <div id="friends-list"></div>
+        </section>
+        <div
+          id="friends-empty"
+          style="
+            text-align: center;
+            color: var(--color-text-muted);
+            margin-top: 2em;
+          "
+        >
+          <i class="fa-solid fa-users fa-3x"></i>
+          <p>Aucune donnée à afficher pour l’instant.</p>
         </div>
       </main>
-      <aside class="fb-sidebar-right"></aside>
     </div>
     <script src="../../assets/js/friends.js"></script>
+    <script>
+      // Navbar : lien profil dynamique et déconnexion
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (user) {
+        const profileLink = document.getElementById("navbar-profile-link");
+        if (profileLink) {
+          profileLink.href = `profile.html?user_id=${user.id}`;
+        }
+        const logoutBtnNav = document.getElementById("logout-btn-navbar");
+        if (logoutBtnNav) {
+          logoutBtnNav.onclick = function () {
+            sessionStorage.removeItem("user");
+            window.location.href = "login.html";
+          };
+        }
+      }
+    </script>
   </body>
 </html>

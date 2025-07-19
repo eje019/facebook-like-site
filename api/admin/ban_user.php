@@ -5,69 +5,54 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Vérifier si l'admin/moderateur est connecté
-if (!isset($_SESSION['admin_id']) || !isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'moderator'])) {
+if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_role']) || !in_array($_SESSION['admin_role'], ['admin', 'moderator'])) {
     http_response_code(401);
-    echo json_encode(['error' => 'Accès non autorisé']);
+    echo json_encode(['success' => false, 'error' => 'Accès non autorisé']);
     exit;
 }
 
-require_once '../../config/database.php';
+require_once '../../config.php';
+$pdo = new PDO(
+    "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+    DB_USER,
+    DB_PASS,
+    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+);
+
+$input = json_decode(file_get_contents('php://input'), true);
+$user_id = $input['user_id'] ?? null;
+if (!$user_id || !is_numeric($user_id)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'ID utilisateur invalide']);
+    exit;
+}
 
 try {
-    $input = json_decode(file_get_contents('php://input'), true);
-    $user_id = $input['user_id'] ?? null;
-    
-    if (!$user_id || !is_numeric($user_id)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'ID utilisateur invalide']);
-        exit;
-    }
-    
-    // Vérifier que l'utilisateur existe et n'est pas déjà banni
-    $check_query = "SELECT id, name, is_banned, role FROM users WHERE id = ?";
-    $check_stmt = $pdo->prepare($check_query);
-    $check_stmt->execute([$user_id]);
-    $user = $check_stmt->fetch(PDO::FETCH_ASSOC);
-    
+    // Vérifier que l'utilisateur existe
+    $stmt = $pdo->prepare('SELECT id, is_banned, role FROM users WHERE id = ?');
+    $stmt->execute([$user_id]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$user) {
-        http_response_code(404);
-        echo json_encode(['error' => 'Utilisateur non trouvé']);
+        echo json_encode(['success' => false, 'error' => 'Utilisateur introuvable']);
         exit;
     }
-    
     if ($user['is_banned']) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Cet utilisateur est déjà banni']);
+        echo json_encode(['success' => false, 'error' => 'Utilisateur déjà banni']);
         exit;
     }
-    
     // Les modérateurs ne peuvent pas bannir les admins
-    if ($_SESSION['role'] === 'moderator' && $user['role'] === 'admin') {
-        http_response_code(403);
-        echo json_encode(['error' => 'Les modérateurs ne peuvent pas bannir les administrateurs']);
+    if ($_SESSION['admin_role'] === 'moderator' && $user['role'] === 'admin') {
+        echo json_encode(['success' => false, 'error' => 'Impossible de bannir un administrateur']);
         exit;
     }
-    
     // Empêcher de se bannir soi-même
     if ($user_id == $_SESSION['admin_id']) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Vous ne pouvez pas vous bannir vous-même']);
+        echo json_encode(['success' => false, 'error' => 'Impossible de se bannir soi-même']);
         exit;
     }
-    
-    // Bannir l'utilisateur
-    $ban_query = "UPDATE users SET is_banned = 1 WHERE id = ?";
-    $ban_stmt = $pdo->prepare($ban_query);
-    $ban_stmt->execute([$user_id]);
-    
-    echo json_encode([
-        'success' => true,
-        'message' => "L'utilisateur {$user['name']} a été banni avec succès"
-    ]);
-    
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
-}
-?> 
+    $stmt = $pdo->prepare('UPDATE users SET is_banned = 1 WHERE id = ?');
+    $stmt->execute([$user_id]);
+    echo json_encode(['success' => true, 'message' => 'Utilisateur banni avec succès']);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => 'Erreur serveur: ' . $e->getMessage()]);
+} 

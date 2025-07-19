@@ -22,7 +22,7 @@ try {
     echo json_encode($response); exit;
 }
 
-$stmt = $pdo->prepare('SELECT id, prenom, nom, email, password, is_active FROM users WHERE email = ?');
+$stmt = $pdo->prepare('SELECT id, prenom, nom, email, password, is_active, avatar, role FROM users WHERE email = ?');
 $stmt->execute([$_POST['email']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 

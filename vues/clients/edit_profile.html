@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Modifier mon profil</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <style>
+      .edit-profile-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--color-bg);
+      }
+      .edit-profile-card {
+        background: var(--color-surface);
+        border-radius: 16px;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+        padding: 2.5em 2.2em 2em 2.2em;
+        min-width: 340px;
+        max-width: 98vw;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .edit-profile-header {
+        text-align: center;
+        margin-bottom: 2em;
+      }
+      .edit-profile-header h1 {
+        color: var(--color-primary);
+        font-size: 2em;
+        font-weight: 700;
+        margin-bottom: 0.3em;
+      }
+      .edit-profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2em;
+        margin-bottom: 1.2em;
+      }
+      .edit-form-group label {
+        color: var(--color-text-muted);
+        font-size: 1em;
+        margin-bottom: 0.3em;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+      }
+      .edit-form-group input[type="text"],
+      .edit-form-group input[type="email"],
+      .edit-form-group input[type="password"] {
+        width: 100%;
+        padding: 0.9em 1.1em;
+        border-radius: 8px;
+        border: 1.5px solid var(--color-border);
+        background: var(--color-input-bg);
+        color: var(--color-text);
+        font-size: 1.08em;
+        margin-top: 0.2em;
+        transition: border 0.2s, background 0.2s;
+      }
+      .edit-form-group input:focus {
+        border: 1.5px solid var(--color-primary);
+        outline: none;
+        background: var(--color-surface-alt);
+      }
+      .edit-form-group input[type="file"] {
+        margin-top: 0.5em;
+        color: var(--color-text-muted);
+      }
+      .edit-profile-btn {
+        background: var(--color-primary);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.9em 1.5em;
+        font-size: 1.08em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.7em;
+        margin-top: 1em;
+      }
+      .edit-profile-btn:hover {
+        background: var(--color-primary-dark);
+      }
+      .edit-profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--color-primary);
+        margin: 0 auto 1em auto;
+        display: block;
+        background: var(--color-bg-alt);
+      }
+      .edit-profile-message {
+        margin: 1em 0 0.5em 0;
+        padding: 0.8em 1em;
+        border-radius: 8px;
+        font-size: 1em;
+        display: none;
+        text-align: center;
+      }
+      .edit-profile-message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        display: block;
+      }
+      .edit-profile-message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="main-navbar compact-navbar">
+      <div class="navbar-left">
+        <img
+          src="https://icons.pqoqubbw.dev/c/facebook.json"
+          alt="Accueil"
+          class="navbar-logo"
+          style="width: 28px; height: 28px"
+        />
+        <span class="navbar-title">Facebook-like</span>
+      </div>
+      <div class="navbar-links" id="navbar-links">
+        <a href="home.html" class="navbar-link">Accueil</a>
+        <a href="friends.html" class="navbar-link">Amis</a>
+        <a href="chat.html" class="navbar-link">Messages</a>
+        <a
+          href="profile.html"
+          class="navbar-link active"
+          id="navbar-profile-link"
+          >Profil</a
+        >
+        <button id="logout-btn-navbar" class="navbar-link navbar-logout">
+          Déconnexion
+        </button>
+      </div>
+    </nav>
+    <div class="edit-profile-container">
+      <div class="edit-profile-card">
+        <div class="edit-profile-header">
+          <img
+            id="edit-profile-avatar"
+            class="edit-profile-avatar"
+            src="../../assets/images/default-avatar.png"
+            alt="avatar"
+          />
+          <h1>Modifier mon profil</h1>
+        </div>
+        <form
+          id="edit-profile-form"
+          class="edit-profile-form"
+          enctype="multipart/form-data"
+        >
+          <div class="edit-form-group">
+            <label for="prenom"><i class="fa-solid fa-user"></i> Prénom</label>
+            <input type="text" id="prenom" name="prenom" required />
+          </div>
+          <div class="edit-form-group">
+            <label for="nom"><i class="fa-solid fa-user"></i> Nom</label>
+            <input type="text" id="nom" name="nom" required />
+          </div>
+          <div class="edit-form-group">
+            <label for="email"
+              ><i class="fa-solid fa-envelope"></i> Email</label
+            >
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="edit-form-group">
+            <label for="password"
+              ><i class="fa-solid fa-lock"></i> Nouveau mot de passe
+              (optionnel)</label
+            >
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Laisser vide pour ne pas changer"
+            />
+          </div>
+          <div class="edit-form-group">
+            <label for="avatar"><i class="fa-solid fa-image"></i> Avatar</label>
+            <input type="file" id="avatar" name="avatar" accept="image/*" />
+          </div>
+          <button type="submit" class="edit-profile-btn">
+            <i class="fa-solid fa-save"></i> Enregistrer
+          </button>
+        </form>
+        <div id="edit-profile-message" class="edit-profile-message"></div>
+      </div>
+    </div>
+    <script>
+      // Navbar : lien profil dynamique et déconnexion
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (!user) {
+        window.location.href = "login.html";
+      }
+      const profileLink = document.getElementById("navbar-profile-link");
+      if (profileLink) {
+        profileLink.href = `profile.html?user_id=${user.id}`;
+      }
+      const logoutBtnNav = document.getElementById("logout-btn-navbar");
+      if (logoutBtnNav) {
+        logoutBtnNav.onclick = function () {
+          sessionStorage.removeItem("user");
+          window.location.href = "login.html";
+        };
+      }
+      // Préremplir les champs avec les infos utilisateur
+      document.getElementById("prenom").value = user.prenom || "";
+      document.getElementById("nom").value = user.nom || "";
+      document.getElementById("email").value = user.email || "";
+      document.getElementById("edit-profile-avatar").src =
+        "../../assets/images/" + (user.avatar || "default-avatar.png");
+      // Preview avatar
+      document.getElementById("avatar").addEventListener("change", function () {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById("edit-profile-avatar").src =
+              e.target.result;
+          };
+          reader.readAsDataURL(this.files[0]);
+        }
+      });
+      // Soumission du formulaire
+      document
+        .getElementById("edit-profile-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = new FormData(this);
+          formData.append("user_id", user.id);
+          fetch("../../api/users/update_profile.php", {
+            method: "POST",
+            body: formData,
+          })
+            .then((r) => r.json())
+            .then((data) => {
+              const msg = document.getElementById("edit-profile-message");
+              if (data.success) {
+                msg.textContent = "Profil mis à jour !";
+                msg.className = "edit-profile-message success";
+                // Mettre à jour sessionStorage
+                if (data.user) {
+                  sessionStorage.setItem("user", JSON.stringify(data.user));
+                }
+                setTimeout(() => {
+                  window.location.href = `profile.html?user_id=${user.id}`;
+                }, 1200);
+              } else {
+                msg.textContent =
+                  data.error || "Erreur lors de la mise à jour.";
+                msg.className = "edit-profile-message error";
+              }
+            })
+            .catch(() => {
+              const msg = document.getElementById("edit-profile-message");
+              msg.textContent = "Erreur réseau.";
+              msg.className = "edit-profile-message error";
+            });
+        });
+    </script>
+  </body>
+</html>

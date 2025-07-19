@@ -13,7 +13,7 @@ $adminEmail = $_SESSION['admin_email'] ?? '';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Admin - Facebook-like</title>
+    <title>Utilisateurs Admin - Facebook-like</title>
     <link rel="stylesheet" href="../../assets/css/admin.css" />
     <link
       rel="stylesheet"
@@ -30,10 +30,10 @@ $adminEmail = $_SESSION['admin_email'] ?? '';
           <div class="admin-sidebar-title">Facebook-like Admin</div>
         </div>
         <nav class="admin-sidebar-nav">
-          <a href="dashboard.php" class="admin-nav-item active"
+          <a href="dashboard.php" class="admin-nav-item"
             ><i class="fa-solid fa-gauge"></i> Dashboard</a
           >
-          <a href="users.html" class="admin-nav-item"
+          <a href="users.php" class="admin-nav-item active"
             ><i class="fa-solid fa-users"></i> Utilisateurs</a
           >
           <a href="#" class="admin-nav-item"
@@ -49,25 +49,7 @@ $adminEmail = $_SESSION['admin_email'] ?? '';
       </aside>
       <main class="admin-main">
         <header class="admin-header">
-          <h1>Dashboard</h1>
-          <button
-            id="refresh-stats-btn"
-            class="admin-btn"
-            style="
-              margin-left: 1.5em;
-              background: var(--color-primary);
-              color: #fff;
-              font-weight: 600;
-            "
-          >
-            <i class="fa-solid fa-rotate"></i> Rafraîchir
-          </button>
-          <div id="stats-loader" style="display: none; margin-left: 2em">
-            <i
-              class="fa fa-spinner fa-spin"
-              style="font-size: 1.7em; color: var(--color-primary)"
-            ></i>
-          </div>
+          <h1>Utilisateurs</h1>
           <div class="admin-user-info">
             <div class="admin-user-avatar" id="admin-avatar">
               <i class="fa-solid fa-user-shield"></i>
@@ -89,45 +71,39 @@ $adminEmail = $_SESSION['admin_email'] ?? '';
             </form>
           </div>
         </header>
-        <section class="admin-stats-grid">
-          <div class="admin-stat-card">
-            <div class="admin-stat-icon users">
-              <i class="fa-solid fa-users"></i>
-            </div>
-            <div class="admin-stat-number" id="stat-users">0</div>
-            <div class="admin-stat-label">Utilisateurs</div>
-          </div>
-          <div class="admin-stat-card">
-            <div class="admin-stat-icon posts">
-              <i class="fa-solid fa-newspaper"></i>
-            </div>
-            <div class="admin-stat-number" id="stat-posts">0</div>
-            <div class="admin-stat-label">Posts</div>
-          </div>
-          <div class="admin-stat-card">
-            <div class="admin-stat-icon comments">
-              <i class="fa-solid fa-comments"></i>
-            </div>
-            <div class="admin-stat-number" id="stat-comments">0</div>
-            <div class="admin-stat-label">Commentaires</div>
-          </div>
-          <div class="admin-stat-card">
-            <div class="admin-stat-icon likes">
-              <i class="fa-solid fa-thumbs-up"></i>
-            </div>
-            <div class="admin-stat-number" id="stat-likes">0</div>
-            <div class="admin-stat-label">Likes</div>
-          </div>
-        </section>
         <section>
-          <h2>Bienvenue sur le panneau d’administration !</h2>
-          <p>
-            Gérez les utilisateurs, les publications, les commentaires et
-            surveillez l’activité du site.
-          </p>
+          <h2>Gestion des utilisateurs</h2>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2em;">
+            <input id="user-search" class="admin-search" type="text" placeholder="Rechercher un utilisateur..." style="max-width: 320px;" />
+            <button id="add-user-btn" class="admin-btn" style="background: var(--color-primary); color: #fff; font-weight: 600; display: none;">
+              <i class="fa-solid fa-user-plus"></i> Ajouter un utilisateur
+            </button>
+          </div>
+          <div id="users-loader" style="display:none; text-align:center; margin-bottom:1em;">
+            <i class="fa fa-spinner fa-spin" style="font-size:1.7em; color: var(--color-primary);"></i>
+          </div>
+          <div style="overflow-x:auto;">
+            <table id="users-table" class="admin-table" style="width:100%; min-width:700px;">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nom</th>
+                  <th>Email</th>
+                  <th>Rôle</th>
+                  <th>Statut</th>
+                  <th>Date d'inscription</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Rempli dynamiquement par JS -->
+              </tbody>
+            </table>
+          </div>
+          <div id="users-pagination" class="admin-pagination"></div>
         </section>
       </main>
     </div>
-    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../../assets/js/admin-users.js"></script>
   </body>
 </html>

@@ -10,7 +10,8 @@ $user_id = (int)$_POST['user_id'];
 $post_id = (int)$_POST['post_id'];
 
 try {
-    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
     
     // Récupère le post original
     $stmt = $pdo->prepare('SELECT p.*, u.prenom, u.nom FROM posts p JOIN users u ON p.user_id = u.id WHERE p.id = ?');

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Connexion en cours...</title>
+    <link rel="stylesheet" href="../../assets/css/admin.css" />
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--color-bg, #181a1b);
+      }
+      .loading-card {
+        background: var(--color-surface-alt, #2c3136);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        padding: 2.5em 2em 2em 2em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid var(--color-border);
+        min-width: 320px;
+      }
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid var(--color-primary, #42b72a);
+        border-top: 6px solid var(--color-surface, #22262a);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1.5em;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .loading-text {
+        color: var(--color-primary, #42b72a);
+        font-size: 1.3em;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+      }
+      .loading-subtext {
+        color: var(--color-text-muted, #b0b3b8);
+        font-size: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <div class="loading-text">Connexion en cours...</div>
+      <div class="loading-subtext">Bienvenue dans l'administration</div>
+    </div>
+    <script>
+      setTimeout(function () {
+        window.location.href = "dashboard.html";
+      }, 2000);
+    </script>
+  </body>
+</html>

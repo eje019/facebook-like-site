@@ -14,7 +14,8 @@ if(!in_array($action, ['accept','refuse'])) {
 }
 
 try {
-    $pdo = new PDO(DB_DSN, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
     $stmt = $pdo->prepare('UPDATE friendships SET status = ? WHERE user_id = ? AND friend_id = ? AND status = "pending"');
     $stmt->execute([$action === 'accept' ? 'accepted' : 'refused', $friend_id, $user_id]);
     if($stmt->rowCount() > 0) {

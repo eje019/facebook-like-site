@@ -12,22 +12,25 @@ if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_role']) || $_SESSIO
 }
 
 require_once '../../config.php';
-$pdo = new PDO(
-    "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-    DB_USER,
-    DB_PASS,
-    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-);
 
 $input = json_decode(file_get_contents('php://input'), true);
 $user_id = $input['user_id'] ?? null;
-if (!$user_id || !is_numeric($user_id)) {
+$role = $input['role'] ?? null;
+$roles_valides = ['user', 'moderator'];
+
+if (!$user_id || !in_array($role, $roles_valides)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'ID utilisateur invalide']);
+    echo json_encode(['success' => false, 'error' => 'Paramètres invalides']);
     exit;
 }
 
 try {
+    $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+    // Ne pas se rétrograder soi-même
+    if ($user_id == $_SESSION['admin_id']) {
+        echo json_encode(['success' => false, 'error' => 'Impossible de se rétrograder soi-même']);
+        exit;
+    }
     // Vérifier que l'utilisateur existe
     $stmt = $pdo->prepare('SELECT id, role FROM users WHERE id = ?');
     $stmt->execute([$user_id]);
@@ -36,19 +39,10 @@ try {
         echo json_encode(['success' => false, 'error' => 'Utilisateur introuvable']);
         exit;
     }
-    // Empêcher la suppression de l'admin connecté
-    if ($user_id == $_SESSION['admin_id']) {
-        echo json_encode(['success' => false, 'error' => 'Impossible de supprimer votre propre compte']);
-        exit;
-    }
-    // Empêcher la suppression d'autres admins
-    if ($user['role'] === 'admin') {
-        echo json_encode(['success' => false, 'error' => 'Impossible de supprimer un autre administrateur']);
-        exit;
-    }
-    $stmt = $pdo->prepare('DELETE FROM users WHERE id = ?');
-    $stmt->execute([$user_id]);
-    echo json_encode(['success' => true, 'message' => 'Utilisateur supprimé avec succès']);
+    // Mettre à jour le rôle
+    $stmt = $pdo->prepare('UPDATE users SET role = ? WHERE id = ?');
+    $stmt->execute([$role, $user_id]);
+    echo json_encode(['success' => true, 'message' => 'Utilisateur rétrogradé en ' . $role]);
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => 'Erreur serveur: ' . $e->getMessage()]);
 } 

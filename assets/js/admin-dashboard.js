@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", function () {
   // Charger les statistiques
   loadStats();
 
+  // Rafraîchissement automatique toutes les 10 secondes
+  setInterval(loadStats, 10000);
+
+  // Bouton "Rafraîchir"
+  const refreshBtn = document.getElementById("refresh-stats-btn");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", function () {
+      loadStats();
+    });
+  }
+
   // Gérer la déconnexion
   setupLogout();
 });
@@ -41,8 +52,12 @@ function getInitials(name) {
 }
 
 async function loadStats() {
+  const loader = document.getElementById("stats-loader");
+  if (loader) loader.style.display = "inline-block";
   try {
-    const response = await fetch("../../api/admin/get_stats.php");
+    const response = await fetch("../../api/admin/get_stats.php", {
+      credentials: "include",
+    });
     const data = await response.json();
 
     if (data.success) {
@@ -66,6 +81,8 @@ async function loadStats() {
       comments: 0,
       likes: 0,
     });
+  } finally {
+    if (loader) loader.style.display = "none";
   }
 }
 
@@ -133,6 +150,7 @@ function setupLogout() {
         // Appeler l'API de déconnexion
         const response = await fetch("../../api/admin/logout.php", {
           method: "POST",
+          credentials: "include",
         });
 
         // Supprimer les données de session

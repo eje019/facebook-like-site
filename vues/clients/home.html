@@ -4,97 +4,31 @@
     <meta charset="UTF-8" />
     <title>Accueil - Facebook-like</title>
     <link rel="stylesheet" href="../../assets/css/style.css" />
-    <!-- Suppression de FontAwesome, remplacé par les icônes SVG personnalisées -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
   </head>
   <body>
-    <!-- Navbar moderne et compacte réintégrée -->
     <nav class="main-navbar compact-navbar">
       <div class="navbar-left">
         <img
           src="https://icons.pqoqubbw.dev/c/facebook.json"
           alt="Accueil"
           class="navbar-logo"
-          style="width: 28px; height: 28px; vertical-align: middle"
+          style="width: 28px; height: 28px"
         />
         <span class="navbar-title">Facebook-like</span>
       </div>
-      <input
-        type="text"
-        class="navbar-search"
-        placeholder="Rechercher..."
-        style="
-          margin-left: 1.2rem;
-          min-width: 120px;
-          max-width: 220px;
-          flex: 1;
-          background: var(--color-bg-alt);
-          color: var(--color-text);
-          border: 1px solid var(--color-border);
-          border-radius: 6px;
-          padding: 0.3em 0.8em;
-          font-size: 0.98em;
-          outline: none;
-        "
-      />
-      <button class="navbar-burger" id="navbar-burger" aria-label="Menu">
-        <img
-          src="https://icons.pqoqubbw.dev/c/menu.json"
-          alt="Menu"
-          style="width: 28px; height: 28px"
-        />
-      </button>
       <div class="navbar-links" id="navbar-links">
-        <a href="home.html" class="navbar-link" title="Accueil">
-          <img
-            src="https://icons.pqoqubbw.dev/c/home.json"
-            alt="Accueil"
-            style="width: 18px; height: 18px"
-          />
-          <span class="navbar-link-label">Accueil</span>
-        </a>
-        <a href="#" class="navbar-link" title="Amis">
-          <img
-            src="https://icons.pqoqubbw.dev/c/user-group.json"
-            alt="Amis"
-            style="width: 18px; height: 18px"
-          />
-          <span class="navbar-link-label">Amis</span>
-        </a>
-        <a href="chat.html" class="navbar-link" title="Messages">
-          <img
-            src="https://icons.pqoqubbw.dev/c/comments.json"
-            alt="Messages"
-            style="width: 18px; height: 18px"
-          />
-          <span class="navbar-link-label">Messages</span>
-        </a>
-        <a href="#" class="navbar-link" title="Groupes">
-          <img
-            src="https://icons.pqoqubbw.dev/c/users.json"
-            alt="Groupes"
-            style="width: 18px; height: 18px"
-          />
-          <span class="navbar-link-label">Groupes</span>
-        </a>
-        <a href="#" class="navbar-link" id="navbar-profile-link" title="Profil">
-          <img
-            src="https://icons.pqoqubbw.dev/c/user.json"
-            alt="Profil"
-            style="width: 18px; height: 18px"
-          />
-          <span class="navbar-link-label">Profil</span>
-        </a>
-        <button
-          id="logout-btn-navbar"
-          class="navbar-link navbar-logout"
-          title="Déconnexion"
+        <a href="home.html" class="navbar-link active">Accueil</a>
+        <a href="friends.html" class="navbar-link">Amis</a>
+        <a href="chat.html" class="navbar-link">Messages</a>
+        <a href="profile.html" class="navbar-link" id="navbar-profile-link"
+          >Profil</a
         >
-          <img
-            src="https://icons.pqoqubbw.dev/c/logout.json"
-            alt="Déconnexion"
-            style="width: 18px; height: 18px"
-          />
-          <span class="navbar-link-label">Déconnexion</span>
+        <button id="logout-btn-navbar" class="navbar-link navbar-logout">
+          Déconnexion
         </button>
       </div>
     </nav>
@@ -192,38 +126,95 @@
     </div>
     <script src="../../assets/js/home.js"></script>
     <script>
-      // Responsive menu burger
+      // Responsive menu burger - Vérification de l'existence de l'élément
       const burger = document.getElementById("navbar-burger");
       const links = document.getElementById("navbar-links");
-      burger.addEventListener("click", function () {
-        links.classList.toggle("navbar-links-open");
-      });
+      if (burger && links) {
+        burger.addEventListener("click", function () {
+          links.classList.toggle("navbar-links-open");
+        });
+      }
+
       // Remplit l'avatar et le nom dans la quickbox
       const user = JSON.parse(sessionStorage.getItem("user"));
       if (user) {
-        document.getElementById("quickbox-prenom").textContent = user.prenom;
-        if (user.avatar) {
-          document.getElementById("quickbox-avatar").src =
-            "../../assets/images/" + user.avatar;
+        const quickboxPrenom = document.getElementById("quickbox-prenom");
+        const quickboxAvatar = document.getElementById("quickbox-avatar");
+
+        if (quickboxPrenom) {
+          quickboxPrenom.textContent = user.prenom;
         }
+        if (quickboxAvatar && user.avatar) {
+          quickboxAvatar.src = "../../assets/images/" + user.avatar;
+        }
+
         // Lien vers le profil dans la navbar
         const profileLink = document.getElementById("navbar-profile-link");
         if (profileLink) {
           profileLink.href = `profile.html?user_id=${user.id}`;
         }
       }
+
+      // Event listeners pour les boutons de la quickbox
+      const photoBtn = document.querySelector(".fb-quickbox-btn.photo");
+      if (photoBtn) {
+        photoBtn.onclick = function () {
+          document.getElementById("fb-post-modal").style.display = "flex";
+          // Focus sur l'input d'image
+          setTimeout(() => {
+            const imageInput = document.getElementById("image-input");
+            if (imageInput) imageInput.click();
+          }, 100);
+        };
+      }
+
+      const liveBtn = document.querySelector(".fb-quickbox-btn.live");
+      if (liveBtn) {
+        liveBtn.onclick = function () {
+          alert("Fonctionnalité vidéo en direct à venir !");
+        };
+      }
+
+      const moodBtn = document.querySelector(".fb-quickbox-btn.mood");
+      if (moodBtn) {
+        moodBtn.onclick = function () {
+          document.getElementById("fb-post-modal").style.display = "flex";
+          // Focus sur l'input humeur
+          setTimeout(() => {
+            const moodInput = document.getElementById("mood-input");
+            if (moodInput) moodInput.focus();
+          }, 100);
+        };
+      }
+
       // Ouvre la modale au clic sur la quickbox
-      document.getElementById("quickbox-placeholder").onclick = function () {
-        document.getElementById("fb-post-modal").style.display = "flex";
-      };
+      const quickboxPlaceholder = document.getElementById(
+        "quickbox-placeholder"
+      );
+      if (quickboxPlaceholder) {
+        quickboxPlaceholder.onclick = function () {
+          const modal = document.getElementById("fb-post-modal");
+          if (modal) modal.style.display = "flex";
+        };
+      }
+
       // Ferme la modale
-      document.getElementById("fb-modal-close").onclick = function () {
-        document.getElementById("fb-post-modal").style.display = "none";
-      };
+      const modalClose = document.getElementById("fb-modal-close");
+      if (modalClose) {
+        modalClose.onclick = function () {
+          const modal = document.getElementById("fb-post-modal");
+          if (modal) modal.style.display = "none";
+        };
+      }
+
       // Ferme la modale si on clique en dehors du contenu
-      document.getElementById("fb-post-modal").onclick = function (e) {
-        if (e.target === this) this.style.display = "none";
-      };
+      const modal = document.getElementById("fb-post-modal");
+      if (modal) {
+        modal.onclick = function (e) {
+          if (e.target === this) this.style.display = "none";
+        };
+      }
+
       // Déconnexion depuis la navbar
       const logoutBtnNav = document.getElementById("logout-btn-navbar");
       if (logoutBtnNav) {

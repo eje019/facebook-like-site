@@ -1,258 +1,198 @@
-// Chat basique - Recherche, conversation, messages
-
-class ChatApp {
-  constructor() {
-    this.user = null;
-    this.currentConversation = null;
-    this.init();
+document.addEventListener("DOMContentLoaded", function () {
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  if (!user) {
+    window.location.href = "login.html";
+    return;
   }
 
-  init() {
-    // Récupérer l'utilisateur connecté
-    this.user = JSON.parse(sessionStorage.getItem("user"));
-    if (!this.user) {
-      window.location.href = "login.html";
-      return;
-    }
+  // Recherche utilisateurs
+  const searchInput = document.getElementById("chat-search");
+  const chatList = document.getElementById("chat-list");
+  let allUsers = [];
 
-    this.cacheDom();
-    this.bindEvents();
-    this.loadUsers();
-  }
-
-  cacheDom() {
-    this.$search = document.getElementById("chat-search");
-    this.$list = document.getElementById("chat-list");
-    this.$header = document.getElementById("chat-header");
-    this.$messages = document.getElementById("chat-messages");
-    this.$form = document.getElementById("chat-form");
-    this.$input = document.getElementById("chat-input");
-  }
-
-  bindEvents() {
-    // Recherche utilisateur
-    this.$search.addEventListener("input", (e) => {
-      const query = e.target.value.trim().toLowerCase();
-      this.filterUsers(query);
-    });
-
-    // Envoi message
-    this.$form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      this.sendMessage();
-    });
-  }
-
-  // --- Recherche et affichage des utilisateurs ---
-  async loadUsers() {
-    try {
-      const res = await fetch(
-        `../../api/chat/users.php?user_id=${this.user.id}`,
-        {
-          credentials: "same-origin",
-          headers: {
-            "X-User-Id": this.user.id,
-          },
+  function loadUsers() {
+    fetch(`../../api/chat/users.php?user_id=${user.id}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          allUsers = data.users;
+          renderUsers(allUsers);
         }
-      );
-      const data = await res.json();
-
-      if (data.success) {
-        this.users = data.users;
-        this.renderUsers(this.users);
-      } else {
-        this.$list.innerHTML = `<div style="color:red;padding:1em;">Erreur: ${data.error}</div>`;
-      }
-    } catch (err) {
-      this.$list.innerHTML =
-        '<div style="color:red;padding:1em;">Erreur chargement utilisateurs</div>';
-    }
+      });
   }
 
-  filterUsers(query) {
-    if (query.length === 0) {
-      this.renderUsers(this.users);
-      return;
-    }
-
-    const filtered = this.users.filter((user) =>
-      `${user.prenom} ${user.nom}`.toLowerCase().includes(query)
-    );
-    this.renderUsers(filtered);
-  }
-
-  renderUsers(users) {
-    if (users.length === 0) {
-      this.$list.innerHTML =
-        '<div style="color:#666;padding:1em;">Aucun utilisateur trouvé</div>';
-      return;
-    }
-
-    this.$list.innerHTML = users
+  function renderUsers(users) {
+    chatList.innerHTML = users
       .map(
-        (user) => `
-      <div class="chat-user-item" data-user-id="${user.id}">
+        (u) => `
+      <div class="chat-user-item" data-id="${u.id}">
         <img src="../../assets/images/${
-          user.avatar || "default-avatar.png"
-        }" class="chat-avatar" alt="avatar">
+          u.avatar || "default-avatar.png"
+        }" class="chat-avatar">
         <div class="chat-user-info">
-          <div class="chat-user-name">${user.prenom} ${user.nom}</div>
-          <div class="chat-user-status">${
-            user.is_online ? "En ligne" : "Hors ligne"
-          }</div>
+          <div class="chat-user-name">${u.prenom} ${u.nom}</div>
         </div>
       </div>
     `
       )
       .join("");
-
-    // Event listeners pour cliquer sur un utilisateur
-    this.$list.querySelectorAll(".chat-user-item").forEach((item) => {
-      item.addEventListener("click", () => {
-        const userId = item.getAttribute("data-user-id");
-        this.createConversation(userId);
-      });
+    document.querySelectorAll(".chat-user-item").forEach((item) => {
+      item.onclick = function () {
+        startConversation(item.getAttribute("data-id"));
+      };
     });
   }
 
-  // --- Création de conversation ---
-  async createConversation(userId) {
-    try {
-      const res = await fetch("../../api/chat/conversations.php", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-Id": this.user.id,
-        },
-        body: JSON.stringify({ user_id: userId }),
-      });
+  searchInput.addEventListener("input", function () {
+    const q = this.value.trim().toLowerCase();
+    renderUsers(
+      allUsers.filter(
+        (u) =>
+          u.prenom.toLowerCase().includes(q) || u.nom.toLowerCase().includes(q)
+      )
+    );
+  });
 
-      const data = await res.json();
-      if (data.success) {
-        this.currentConversation = data.conversation;
-        this.renderHeader(data.conversation.user);
-        this.loadMessages();
-        this.$form.style.display = "flex";
-      } else {
-        alert(data.error || "Erreur création conversation");
-      }
-    } catch (err) {
-      alert("Erreur création conversation");
-    }
-  }
+  // Conversation
+  let currentConversationId = null;
+  let currentContact = null; // Ajouté pour stocker l'utilisateur sélectionné
 
-  renderHeader(user) {
-    this.$header.innerHTML = `
-      <img src="../../assets/images/${
-        user.avatar || "default-avatar.png"
-      }" class="chat-avatar" alt="avatar">
-      <div class="chat-header-info">
-        <div class="chat-header-name">${user.prenom} ${user.nom}</div>
-        <div class="chat-header-status">${
-          user.is_online ? "En ligne" : "Hors ligne"
-        }</div>
-      </div>
-    `;
-  }
-
-  // --- Messages ---
-  async loadMessages() {
-    if (!this.currentConversation) return;
-
-    try {
-      const res = await fetch(
-        `../../api/chat/messages.php?conversation_id=${this.currentConversation.id}&user_id=${this.user.id}`,
-        {
-          credentials: "same-origin",
-          headers: {
-            "X-User-Id": this.user.id,
-          },
+  function startConversation(otherUserId) {
+    // Trouver l'objet utilisateur sélectionné
+    currentContact = allUsers.find((u) => u.id == otherUserId);
+    // Mettre à jour l'en-tête du chat
+    updateChatHeader();
+    fetch("../../api/chat/conversations.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: user.id, other_user_id: otherUserId }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          currentConversationId = data.conversation_id;
+          document.getElementById("chat-form").style.display = "";
+          loadMessages();
         }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        this.renderMessages(data.messages);
-      } else {
-        this.$messages.innerHTML = `<div style="color:red;text-align:center;">Erreur: ${data.error}</div>`;
-      }
-    } catch (err) {
-      this.$messages.innerHTML =
-        '<div style="color:red;text-align:center;">Erreur chargement messages</div>';
-    }
+      });
   }
 
-  renderMessages(messages) {
-    if (messages.length === 0) {
-      this.$messages.innerHTML =
-        '<div style="color:#666;text-align:center;">Aucun message</div>';
+  function updateChatHeader() {
+    const header = document.getElementById("chat-header");
+    if (!currentContact) {
+      header.innerHTML =
+        '<span style="color: var(--color-text-muted)">Sélectionnez une conversation</span>';
       return;
     }
-
-    this.$messages.innerHTML = messages
-      .map(
-        (msg) => `
-      <div class="chat-message${msg.sender_id == this.user.id ? " me" : ""}">
-        <div class="message-content">${this.escapeHtml(msg.content)}</div>
-        <div class="message-time">${this.formatTime(msg.created_at)}</div>
-      </div>
-    `
-      )
-      .join("");
-
-    this.$messages.scrollTop = this.$messages.scrollHeight;
+    header.innerHTML = `
+    <img src="../../assets/images/${
+      currentContact.avatar || "default-avatar.png"
+    }" class="chat-avatar" style="width:48px;height:48px;">
+    <div class="chat-header-info">
+      <div class="chat-header-name">${currentContact.prenom} ${
+      currentContact.nom
+    }</div>
+      <div class="chat-header-status">Hors ligne</div>
+    </div>
+  `;
   }
 
-  async sendMessage() {
-    const content = this.$input.value.trim();
-    if (!content || !this.currentConversation) return;
+  // Messages
+  const chatMessages = document.getElementById("chat-messages");
+  const chatForm = document.getElementById("chat-form");
+  const chatInput = document.getElementById("chat-input");
 
-    try {
-      const res = await fetch(
-        `../../api/chat/messages.php?conversation_id=${this.currentConversation.id}&user_id=${this.user.id}`,
-        {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
-            "Content-Type": "application/json",
-            "X-User-Id": this.user.id,
-          },
-          body: JSON.stringify({ content: content }),
+  function loadMessages() {
+    if (!currentConversationId) return;
+    fetch(
+      `../../api/chat/messages.php?conversation_id=${currentConversationId}`
+    )
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          chatMessages.innerHTML = data.messages
+            .map(
+              (m) => `
+            <div class="chat-message${m.sender_id == user.id ? " me" : ""}">
+              <div>${m.content}</div>
+              <div class="chat-message-time">${new Date(
+                m.created_at
+              ).toLocaleString("fr-FR")}</div>
+            </div>
+          `
+            )
+            .join("");
+          chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-      );
+      });
+  }
 
-      const data = await res.json();
-      if (data.success) {
-        this.$input.value = "";
-        this.loadMessages(); // Recharger tous les messages
-      } else {
-        alert(data.error || "Erreur envoi message");
-      }
-    } catch (err) {
-      alert("Erreur envoi message");
+  // Gestion de l'envoi d'image (préparation, pas d'appel API encore)
+  const chatImageInput = document.getElementById("chat-image-input");
+  let imageToSend = null;
+  chatImageInput.addEventListener("change", function () {
+    if (this.files && this.files[0]) {
+      imageToSend = this.files[0];
+      // Optionnel : afficher un aperçu ou notifier l'utilisateur
+    } else {
+      imageToSend = null;
     }
-  }
+  });
 
-  // --- Utilitaires ---
-  escapeHtml(text) {
-    const div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
+  chatForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!currentConversationId) return;
+    const content = chatInput.value.trim();
+    if (!content && !imageToSend) return;
+    if (imageToSend) {
+      let formData = new FormData();
+      formData.append("conversation_id", currentConversationId);
+      formData.append("sender_id", user.id);
+      formData.append("image", imageToSend);
+      fetch("../../api/chat/upload_file.php", {
+        method: "POST",
+        body: formData,
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) {
+            imageToSend = null;
+            chatImageInput.value = "";
+            chatInput.value = "";
+            loadMessages();
+          } else {
+            alert(data.error || "Erreur lors de l'envoi de l'image");
+          }
+        })
+        .catch(() => {
+          alert("Erreur lors de l'envoi de l'image");
+        });
+      return;
+    }
+    if (!content) return;
+    fetch("../../api/chat/messages.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        conversation_id: currentConversationId,
+        sender_id: user.id,
+        content: content,
+      }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          chatInput.value = "";
+          loadMessages();
+        }
+      });
+  });
 
-  formatTime(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      day: "2-digit",
-      month: "2-digit",
-    });
-  }
-}
+  // Polling pour rafraîchir les messages
+  setInterval(() => {
+    if (currentConversationId) loadMessages();
+  }, 3000);
 
-// Initialisation
-window.addEventListener("DOMContentLoaded", () => {
-  new ChatApp();
+  // Initialisation
+  loadUsers();
 });
