@@ -15,7 +15,7 @@ if(empty($_POST['email']) || empty($_POST['password'])) {
 
 try {
     // CORRECTION ICI : on construit le DSN à partir des constantes de config
-    $dsn = "mysql:host="nue.domcloud.co";dbname="facebook_db";charset=utf8";
+    $dsn = "mysql:host='nue.domcloud.co';dbname='facebook_db';charset=utf8";
     $pdo = new PDO($dsn, 'facebook', 't6wOpC276(+m8D(EfG', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
 } catch(Exception $e) {
     $response['error'] = 'Erreur de connexion à la base de données.';
