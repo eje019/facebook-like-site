@@ -200,6 +200,8 @@ button:active,
 .fb-avatar-sm,
 .fb-avatar-lg {
   border-radius: 50%;
+  height: 15px;
+  width:15px;
   border: 2px solid var(--color-border);
 }
 
