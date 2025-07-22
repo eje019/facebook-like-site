@@ -5,10 +5,10 @@
  */
 
 // Configuration de la base de données
-define('DB_HOST', 'nue.domcloud.co');
+define('DB_HOST', "nue.domcloud.co");
 define('DB_NAME', 'facebook_db');
 define('DB_USER', 'facebook');
-define('DB_PASS', 't6wOpC276(+m8D(EfG');
+define('DB_PASS', "t6wOpC276(+m8D(EfG");
 
 // Configuration de l'application
 define('APP_NAME', 'Facebook-like');

@@ -7,45 +7,46 @@ require_once '../../config.php';
 
 $response = ["success" => false];
 
-// On utilise $_POST car le JS envoie du FormData
-if(empty($_POST['email']) || empty($_POST['password'])) {
+// Vérification des champs requis
+if (empty($_POST['email']) || empty($_POST['password'])) {
     $response['error'] = 'Veuillez remplir tous les champs.';
     echo json_encode($response); exit;
 }
 
-try {
-    $dsn = "mysql:host=nue.domcloud.co;dbname=facebook_db;charset=utf8";
-    $pdo = new PDO($dsn, 'facebook', 't6wOpC276(+m8D(EfG', [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-]);
-} catch(Exception $e) {
+// Connexion avec mysqli
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+// Vérifier la connexion
+if ($conn->connect_error) {
     $response['error'] = 'Erreur de connexion à la base de données.';
     echo json_encode($response); exit;
 }
 
-$stmt = $pdo->prepare('SELECT id, prenom, nom, email, password, is_active, avatar, role FROM users WHERE email = ?');
-$stmt->execute([$_POST['email']]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+// Préparer la requête
+$stmt = $conn->prepare("SELECT id, prenom, nom, email, password, is_active, avatar, role FROM users WHERE email = ?");
+$stmt->bind_param("s", $_POST['email']);
+$stmt->execute();
 
-if(!$user) {
+// Récupérer le résultat
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Vérification des identifiants
+if (!$user || !password_verify($_POST['password'], $user['password'])) {
     $response['error'] = 'Identifiants incorrects.';
     echo json_encode($response); exit;
 }
 
-// Si le champ is_active existe dans ta table users, garde ce bloc.
-// Sinon, tu peux le commenter ou l'enlever.
-if(isset($user['is_active']) && !$user['is_active']) {
+// Vérifier si le compte est actif
+if (isset($user['is_active']) && !$user['is_active']) {
     $response['error'] = 'Votre compte n\'est pas encore activé. Vérifiez votre email.';
     echo json_encode($response); exit;
 }
 
-if(!password_verify($_POST['password'], $user['password'])) {
-    $response['error'] = 'Identifiants incorrects.';
-    echo json_encode($response); exit;
-}
-
-// On ne retourne pas le mot de passe !
+// Ne pas renvoyer le mot de passe
 unset($user['password']);
+
 $response['success'] = true;
 $response['user'] = $user;
-echo json_encode($response); 
+
+echo json_encode($response);
