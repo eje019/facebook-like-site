@@ -1,8 +1,10 @@
 # Utilise l'image officielle PHP avec Apache
 FROM php:8.2-apache
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
 # Copie tout le code dans le dossier web de l'image
 COPY . /var/www/html/
+
 
 # Active mod_rewrite (utile pour les routes propres)
 RUN a2enmod rewrite
